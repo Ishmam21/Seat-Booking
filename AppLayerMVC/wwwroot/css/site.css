@@ -1,0 +1,176 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+  color: var(--bs-secondary-color);
+  text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+  text-align: start;
+}
+
+.seat-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.seat-grid {
+    display: grid;
+    grid-auto-rows: 48px;
+    gap: 16px;
+}
+
+.seat {
+     display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #999;
+    background: #e8f5e9;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+    
+}
+
+.seat:hover:not(:disabled) {
+    background: #c8e6c9;
+}
+
+.seat.booked {
+
+    background: #ed0b0b;
+    color: #fff;
+    cursor: default;
+}
+.seat.booked:hover {
+    background: #ed0b0b;
+    
+    /* cursor: not-allowed; */
+}
+
+.summary {
+    position: fixed;
+    bottom: 70px;
+    right: 20px;
+    padding: 12px 18px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.seat-price {
+    position: absolute;   /* floats above the seat instead of pushing the label around */
+    bottom: 100%;         /* sits just above the button */
+    background: #222;     /* dark bubble so it's readable */
+    color: #fff;
+    padding: 4px 8px;
+    opacity: 0;           /* hidden until hover */
+}
+
+.seat:hover:not(:disabled) .seat-price {
+    opacity: 1;           /* show it while hovering an available seat */
+}
+
+.seat.selected {
+    background: #2196f3;
+    color: #fff;
+}
+.seat.selected:hover {
+    background: #1072c3;
+    color: #fff;
+}
+
+.seat:active {
+    background: #000fe5;
+    color: #fff;
+}
+
+.editor-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.editor-grid {
+    display: grid;
+    grid-auto-rows: 60px;   /* SAME as .seat-grid */
+    gap: 16px;              /* SAME as .seat-grid */
+}
+
+.cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #999;
+    background: #e8f5e9;
+    width: 100%;
+    height: 100%;
+}
+
+.cell:hover:not(:disabled) {
+    background: #c8e6c9;    /* SAME as .seat:hover:not(:disabled) */
+    cursor: pointer;          /* SAME as .seat:hover:not(:disabled) */
+}
+
+.cell:active {
+    background: #000fe5;
+    color: #fff;            /* SAME as .seat:active */
+}
+
+.cell.selected {
+    background: #2196f3;    /* SAME as .seat.selected */
+    color: #fff;            /* SAME as .seat.selected */
+}
+
+.cell-form {
+  
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.cell-form.hidden {
+    display: none;
+}

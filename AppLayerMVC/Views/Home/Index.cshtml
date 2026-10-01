@@ -1,0 +1,45 @@
+﻿@using AppLayerMVC.Models
+@model List<Seat>
+
+@{
+    ViewData["Title"] = "Seats";
+
+    var Totalseats = Model.Where(s => s.IsSelected).Count();
+    var TotalPrice = Model.Where(s => s.IsSelected).Sum(s => s.Price); 
+}
+<h1 style="text-align: center;margin-bottom: 20px;">Available Seats</h1>
+<div class="legend">
+    <div class="legend-item">
+        <div class="legend-color available"></div>
+        <span>Available</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color selected"></div>
+        <span>Selected</span>
+    </div>
+    <div class="legend-item">
+        <div class="legend-color booked"></div>
+        <span>Booked</span>
+    </div>
+<div class="seat-wrapper">
+    
+<div class="seat-grid" style="grid-template-columns: repeat(@Model.Max(s => s.X), 48px)">
+    @foreach (var seat in Model)
+    {
+        <button onclick="toggleSeatSelection(this)" class="seat @(seat.IsBooked ? "booked" : "") @(seat.IsSelected ? "selected" : "")"
+        style="grid-column: @seat.X; grid-row: @seat.Y;"
+        data-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" @(seat.IsBooked ? "disabled" : "")>
+            
+            
+            @seat.Label
+            <span class="seat-price">Bdt @seat.Price.ToString("0.##")</span>
+        </button>
+    }
+
+</div>
+</div>
+</div>
+<div class="summary">
+    <div>Seats: <strong id="seat-count">0</strong></div>
+    <div>Total: <strong id="seat-total">Bdt 0</strong></div>
+</div>

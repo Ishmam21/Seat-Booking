@@ -1,0 +1,26 @@
+@using System.Data
+@{
+    int rows=10;
+    int cols=20;
+}
+<h1 style="text-align: center;">Create Your Own Layout</h1>
+
+
+    <div class="editor-wrapper">
+        <div class="editor-grid" style="grid-template-columns: repeat(@cols, 48px); grid-template-rows: repeat(@rows, 48px);">
+            @for (int i = 1; i <= rows; i++)
+            {
+                @for (int j = 1; j <= cols; j++)
+                {
+                    <button class="cell" onclick="selectCell(this)" style="grid-column: @j; grid-row: @i;" data-row="@i" data-col="@j"></button>
+                }
+                
+            }
+        </div>
+    </div>
+    <div id="cell-form" class="cell-form hidden">
+        <input type="text" id="cell-label" placeholder="Label value" />
+        <input type="text" id="cell-price" placeholder="(BDT)0.00"/>
+        <button class="btn btn-success" id="save-cell" onclick="saveCell()">Save</button>
+        <button class="btn btn-danger" id="cancel-cell" onclick="cancelCell()">Cancel</button>
+    </div>
