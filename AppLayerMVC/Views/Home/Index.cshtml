@@ -1,11 +1,12 @@
 ﻿@using AppLayerMVC.Models
-@model List<Seat>
+@model Layout
+
 
 @{
     ViewData["Title"] = "Seats";
 
-    var Totalseats = Model.Where(s => s.IsSelected).Count();
-    var TotalPrice = Model.Where(s => s.IsSelected).Sum(s => s.Price); 
+    var Totalseats = Model.Seats.Where(s => s.IsSelected).Count();
+    var TotalPrice = Model.Seats.Where(s => s.IsSelected).Sum(s => s.Price); 
 }
 <h1 style="text-align: center;margin-bottom: 20px;">Available Seats</h1>
 <div class="legend">
@@ -21,24 +22,26 @@
         <div class="legend-color booked"></div>
         <span>Booked</span>
     </div>
-<div class="seat-wrapper">
-    
-<div class="seat-grid" style="grid-template-columns: repeat(@Model.Max(s => s.X), 48px)">
-    @foreach (var seat in Model)
-    {
-        <button onclick="toggleSeatSelection(this)" class="seat @(seat.IsBooked ? "booked" : "") @(seat.IsSelected ? "selected" : "")"
-        style="grid-column: @seat.X; grid-row: @seat.Y;"
-        data-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" @(seat.IsBooked ? "disabled" : "")>
-            
-            
-            @seat.Label
-            <span class="seat-price">Bdt @seat.Price.ToString("0.##")</span>
-        </button>
-    }
+</div>  @* added: closes .legend, so the seat map is no longer nested inside it *@
 
-</div>
-</div>
-</div>
+<div class="seat-wrapper">
+    <div>
+        <h2>@Model.Name</h2>
+    </div>
+    <div class="seat-grid" style="grid-template-columns: repeat(@Model.Seats.Max(s => s.X), 48px)">
+        @foreach (var seat in Model.Seats)
+        {
+            <button onclick="toggleSeatSelection(this)" class="seat @(seat.IsBooked ? "booked" : "") @(seat.IsSelected ? "selected" : "")"
+            style="grid-column: @seat.X; grid-row: @seat.Y;"
+            data-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" @(seat.IsBooked ? "disabled" : "")>
+                @seat.Label
+                @seat.Price
+                @* <span class="seat-price">Bdt @seat.Price.ToString("0.##")</span> *@
+            </button>
+        }
+    </div>   @* closes .seat-grid *@
+</div>       @* closes .seat-wrapper; removed: the third </div> that used to follow this one *@
+
 <div class="summary">
     <div>Seats: <strong id="seat-count">0</strong></div>
     <div>Total: <strong id="seat-total">Bdt 0</strong></div>

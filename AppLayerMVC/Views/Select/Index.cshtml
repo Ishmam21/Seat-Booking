@@ -1,0 +1,29 @@
+
+@using AppLayerMVC.Models
+@model List<Layout>
+
+@{
+    ViewData["Title"] = "Select Layout";
+}
+<h1 style="text-align: center;">Select Layout</h1>
+
+<div class="table-container">
+    <table>
+        <tr>
+            <th>Layouts</th>
+        </tr>
+        @foreach (var layout in Model)
+        {
+            <tr>
+                <td>
+                    <a href="@Url.Action("ViewLayout", "Home", new { id = layout.Id })" class="btn btn-primary">@layout.Name</a>
+                </td>
+            </tr>
+        }
+    </table>
+</div>
+
+
+
+
+   

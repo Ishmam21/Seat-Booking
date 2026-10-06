@@ -70,7 +70,7 @@ function saveCell() {
     const priceText = document.getElementById('cell-price').value;
     const price = Number(priceText);
 
-    if (label==='' || isNaN(price) || price < 0) {
+    if (label==='' || isNaN(price) || price <= 0) {
         alert('Please fill in all fields with valid values');
         return;
     }
@@ -94,4 +94,73 @@ function closeForm(){
     document.getElementById('cell-label').value = '';
     document.getElementById('cell-price').value = '';
     unlockCell();
+}
+
+function resetLayout() {
+    if(confirm('Are you sure you want to reset the layout? This will clear all cells.')) {
+        const cells = document.querySelectorAll('.cell');
+        for (const cell of cells) {
+            cell.textContent = '';
+            delete cell.dataset.label;
+            delete cell.dataset.price;
+            cell.classList.remove('selected');
+        }
+
+        closeForm();
+    }
+}
+
+async function submitLayout() {
+    
+    const formIsOpen = !document.getElementById('cell-form').classList.contains('hidden');
+    if (formIsOpen) {
+    alert('Finish the open seat first');
+    return;
+    }
+
+    const layoutName = prompt('Enter a name for the layout:');
+    if (!layoutName) {
+        alert('Please enter a valid layout name.');
+        return;
+    }
+
+    const activeCells = document.querySelectorAll('.cell.selected');
+
+    if (activeCells.length === 0) {
+        alert('Select minimum one cell before submitting the layout.');
+        return;
+    }
+
+
+    const seats = [];
+    for (const cell of activeCells) {
+        seats.push({
+            label: cell.dataset.label,
+            price: parseFloat(cell.dataset.price),
+            x: parseInt(cell.dataset.col),
+            y: parseInt(cell.dataset.row)
+        });
+    }
+
+    const response = await fetch('/Creator/SaveLayout',
+        {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(
+                {
+                    name: layoutName.trim(),
+                    seats: seats
+                }
+            )
+        }
+
+    );
+
+    if (!response.ok) {
+        alert('Error submitting layout');
+        return;
+    }
+
+
+    alert(`Layout submitted: ${layoutName}`);
 }

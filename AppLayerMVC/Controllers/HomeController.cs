@@ -23,15 +23,14 @@ public class HomeController : Controller
     {
         
 
-        var selectedSeats = seats.Where(s => s.IsBooked).ToList();
-        ViewBag.SelectedSeats = selectedSeats;
+        
 
-        return View(seats);
+        return RedirectToAction("Index", "Select");
     }
     [HttpPost]
     public IActionResult SelectSeat(int id)
     {
-        var seat = seats.FirstOrDefault(s => s.Id == id);
+        var seat = CreatorController.layouts.SelectMany(l => l.Seats).FirstOrDefault(s => s.Id == id);
 
         if (seat == null) return NotFound();
 
@@ -55,5 +54,13 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+
+    public IActionResult ViewLayout(int id)   // "id" must be named exactly this: it's filled from the {id?} part of the URL /Home/ViewLayout/3
+{
+    var layout = CreatorController.layouts.FirstOrDefault(l => l.Id == id);   // null if no layout has that id
+    if (layout == null) return NotFound("The requested layout was not found.");   // bad id in the URL: show a 404 instead of crashing
+
+    return View("Index", layout);   // reuse Views/Home/Index.cshtml. The name is needed because without it MVC would look for ViewLayout.cshtml
+}
 }
 
