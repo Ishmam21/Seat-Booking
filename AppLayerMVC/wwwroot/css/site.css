@@ -17,6 +17,99 @@ html {
   min-height: 100%;
 }
 
+:root {
+    --ink: #17181a;
+    --paper: #f5f2ec;      /* warm off-white page background */
+    --line: #ddd7ca;
+    --accent: #1f6b4a;     /* deep green, same family as the available seats */
+}
+
+body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+h1, h2, .brand {
+    font-family: "Fraunces", Georgia, serif;   /* the serif is what gives the site some character */
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+/* header */
+.site-header {
+    border-bottom: 1px solid var(--ink);
+    padding: 14px 0;
+    margin-bottom: 28px;
+}
+.site-header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.site-header-left { display: flex; align-items: center; gap: 18px; }
+
+.brand {
+    font-size: 1.75rem;
+    color: var(--ink);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+.brand::before {            /* small rounded square: a seat cell, drawn with CSS */
+    content: "";
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    background: var(--accent);
+    margin-right: 9px;
+}
+
+.back-btn {
+    background: transparent;
+    border: 1px solid var(--ink);
+    border-radius: 999px;
+    padding: 3px 14px;
+    font-size: 0.875rem;
+    color: var(--ink);
+    cursor: pointer;
+}
+.back-btn:hover { background: var(--ink); color: var(--paper); }
+
+.site-nav { display: flex; gap: 6px; }
+.site-nav a {
+    color: var(--ink);
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 500;
+}
+.site-nav a:hover { background: var(--line); }
+.site-nav a.active { background: var(--ink); color: var(--paper); }
+
+/* footer: height stays 60px to match body's margin-bottom, so fixed buttons at bottom: 70px still clear it */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    line-height: 60px;
+    border-top: 1px solid var(--line);
+    color: #6b6a64;
+    font-size: 0.875rem;
+}
+
+/* primary buttons follow the same palette instead of Bootstrap blue */
+.btn-primary {
+    --bs-btn-bg: var(--ink);
+    --bs-btn-border-color: var(--ink);
+    --bs-btn-hover-bg: var(--accent);
+    --bs-btn-hover-border-color: var(--accent);
+    --bs-btn-active-bg: var(--accent);
+    --bs-btn-active-border-color: var(--accent);
+}
+
 body {
   margin-bottom: 60px;
 }
@@ -31,18 +124,17 @@ body {
 }
 
 .seat-wrapper {
-  overflow-x: auto ;
-  display: flex;
-  
+  overflow-x: auto;
+  /* REMOVED display:flex: it fights margin:0 auto on the grid and clips wide layouts */
 }
 
 .seat-grid {
-    display: grid;           /* restored: without this the seat map collapses */
-    grid-auto-rows: 48px;    /* restored */
-    gap: 16px;               /* restored */
+    display: grid;
+    grid-auto-rows: 48px;
+    gap: 16px;
     margin: 0 auto;
     width: max-content;
-    background: #ef0808;
+    /* REMOVED background:#ef0808: leftover debug color */
 }
 
 .seat {
@@ -127,7 +219,9 @@ body {
     justify-content: center;
     position: relative;
 
-    padding: 15px;
+    padding: 2px;               /* CHANGED from 15px: label + price must fit inside the cell */
+    font-size: 11px;            /* ADDED: smaller text so two lines fit */
+    white-space: pre-line;      /* ADDED: makes the \n from saveCell show as a line break */
     border-radius: 8px;
     border: 1px solid #999;
     background: #e8f5e9;
@@ -148,6 +242,12 @@ body {
 .cell.selected {
     background: #2196f3;    /* SAME as .seat.selected */
     color: #fff;            /* SAME as .seat.selected */
+}
+
+/* ADDED: without this a placed cell turns light green on hover and looks unplaced */
+.cell.selected:hover:not(:disabled) {
+    background: #1072c3;
+    color: #fff;
 }
 
 .cell-form {
@@ -172,10 +272,40 @@ body {
 }
 
 .submit-form {
-    position: fixed;
-    bottom: 70px;
-    left: 50%;
+    position: relative;
+    bottom: 87%;
+    left: 90%;
     transform: translateX(-50%);
     display: flex;
     gap: 8px;
+    margin-bottom: 16px;
+    
+}
+
+.legend {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 0.875rem;
+}
+/* CHANGED: the flex row rules belong on .legend-item (the wrapper), not .legend-color */
+.legend-item { display: flex; align-items: center; gap: 6px; }
+
+/* CHANGED: was .legend-swatch, but your markup uses legend-color. This is the dot itself. */
+.legend-color {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 1px solid #999;
+}
+.legend-color.available { background: #e8f5e9; }
+.legend-color.selected  { background: #2196f3; }
+.legend-color.booked    { background: #ed0b0b; }
+
+.select-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: 12px;
 }

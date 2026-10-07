@@ -16,7 +16,14 @@
         {
             <tr>
                 <td>
+                    <div class="select-layout">
+                        <h3>@layout.Name</h3>
+                        <p>@layout.Seats.Count() Seats</p>
                     <a href="@Url.Action("ViewLayout", "Home", new { id = layout.Id })" class="btn btn-primary">@layout.Name</a>
+                    </div>
+                </td>
+                <td>
+                    
                 </td>
             </tr>
         }

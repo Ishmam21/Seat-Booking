@@ -48,6 +48,7 @@ function selectCell(btn) {
     if (btn.classList.contains('selected')) {
         lastSelected = btn;
         document.getElementById('cell-form').classList.remove('hidden');
+        // document.getElementById('cell-label').focus();
         lockCell();
     } else {
 
@@ -163,4 +164,11 @@ async function submitLayout() {
 
 
     alert(`Layout submitted: ${layoutName}`);
+}
+
+function backConfirm()
+{
+    if(confirm('Are you sure you want to go back? All unsaved changes will be lost.')) {
+        return history.back();
+    }
 }

@@ -3,8 +3,13 @@
     int rows=10;
     int cols=20;
 }
-<h1 style="text-align: center;">Create Your Own Layout</h1>
-
+<div>
+    <h1 style="text-align: center;">Create Your Own Layout</h1>
+    <div class="submit-form">
+        <button class="btn btn-primary" onclick="submitLayout()">Submit Layout</button>
+        <button class="btn btn-secondary" onclick="resetLayout()">Reset Layout</button>
+    </div>
+</div>
 
     <div class="editor-wrapper">
         <div class="editor-grid" style="grid-template-columns: repeat(@cols, 48px); grid-template-rows: repeat(@rows, 48px);">
@@ -18,13 +23,10 @@
             }
         </div>
     </div>
-    <div id="cell-form" class="cell-form hidden">
+    <form id="cell-form" class="cell-form hidden" onsubmit="saveCell(); return false;">   @* was a div. onsubmit runs on Enter or the Save button; return false stops the page reload *@
         <input type="text" id="cell-label" placeholder="Label value" />
         <input type="text" id="cell-price" placeholder="(BDT)0.00"/>
-        <button class="btn btn-success" id="save-cell" onclick="saveCell()">Save</button>
-        <button class="btn btn-danger" id="cancel-cell" onclick="cancelCell()">Cancel</button>
-    </div>
-    <div class="submit-form">
-        <button class="btn btn-primary" onclick="submitLayout()">Submit Layout</button>
-        <button class="btn btn-secondary" onclick="resetLayout()">Reset Layout</button>
-    </div>
+        <button type="submit" class="btn btn-success" id="save-cell">Save</button>   @* type="submit"; onclick removed, since onsubmit handles it *@
+        <button type="button" class="btn btn-danger" id="cancel-cell" onclick="cancelCell()">Cancel</button>   @* type="button" so it doesn't submit the form *@
+    </form>
+    
