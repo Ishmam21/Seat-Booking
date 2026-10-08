@@ -23,14 +23,20 @@
                     </div>
                 </td>
                 <td>
-                    
+                    @* ADDED: mini preview in its own column. Same grid-column/grid-row idea as the customer view, just 10px cells *@
+            <div class="mini-grid" style="grid-template-columns: repeat(@layout.Seats.Max(s => s.X), 10px)">
+                @foreach (var seat in layout.Seats)
+                {
+                    <span class="mini-seat @(seat.IsBooked ? "booked" : "")" style="grid-column: @seat.X; grid-row: @seat.Y;"></span>
+                }
+            </div>
                 </td>
             </tr>
         }
     </table>
 </div>
 
-
+    
 
 
    

@@ -78,7 +78,7 @@ function saveCell() {
 
     lastSelected.dataset.label = label;
     lastSelected.dataset.price = price;
-    lastSelected.innerHTML = `${label}<br>${price}`;
+    lastSelected.textContent = `${label}\n${price}`;
 
     closeForm();
 }
@@ -120,7 +120,7 @@ async function submitLayout() {
     }
 
     const layoutName = prompt('Enter a name for the layout:');
-    if (!layoutName) {
+    if (!layoutName || layoutName.trim() === '') {
         alert('Please enter a valid layout name.');
         return;
     }
@@ -164,6 +164,7 @@ async function submitLayout() {
 
 
     alert(`Layout submitted: ${layoutName}`);
+    window.location.href = '/Select/Index';
 }
 
 function backConfirm()

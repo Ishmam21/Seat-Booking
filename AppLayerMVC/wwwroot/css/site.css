@@ -309,3 +309,16 @@ body {
     gap: 16px;
     margin: 12px;
 }
+
+.mini-grid {
+    display: grid;           /* required: grid-column/grid-row only work inside a grid */
+    grid-auto-rows: 10px;    /* same as the column width, so cells are squares */
+    gap: 3px;                /* arbitrary */
+    width: max-content;      /* grid shrinks to fit its cells */
+}
+.mini-seat {
+    background: #e8f5e9;     /* same as an available seat */
+    border: 1px solid #999;
+    border-radius: 2px;
+}
+.mini-seat.booked { background: #ed0b0b; }
