@@ -1,0 +1,38 @@
+@model BLL.Models.LoginModel;
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="auth-wrap">
+    <div class="auth-card">
+        <h1 class="auth-title">Seatz</h1>
+        <p class="auth-sub">Log in to continue</p>
+
+        <form asp-controller="Account" asp-action="Login" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="auth-error"></div>
+
+            <div class="auth-field">
+                <label asp-for="Email"></label>
+                <input asp-for="Email" type="email" autocomplete="email" autofocus />
+                <span asp-validation-for="Email" class="auth-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="Password"></label>
+                <input asp-for="Password" type="password" autocomplete="current-password" />
+                <span asp-validation-for="Password" class="auth-error"></span>
+            </div>
+
+            <button type="submit" class="auth-btn">Log in</button>
+        </form>
+
+        <p class="auth-alt">
+            No account? <a asp-controller="Register" asp-action="Index">Register</a>
+        </p>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

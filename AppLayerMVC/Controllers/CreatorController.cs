@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using AppLayerMVC.Models;
+using BLL.Models;
 
 namespace AppLayerMVC.Controllers;
 

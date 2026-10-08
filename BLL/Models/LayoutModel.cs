@@ -1,4 +1,4 @@
-namespace AppLayerMVC.Models;
+namespace BLL.Models;
 
 public class Layout
 {

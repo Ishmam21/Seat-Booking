@@ -17,17 +17,25 @@
 </head>
 <body>
     <header class="site-header">
-        <div class="container site-header-inner">
-            <div class="site-header-left">
-                <button type="button" class="back-btn" onclick="backConfirm()">&larr; Back</button>
-                <a class="brand" asp-controller="Select" asp-action="Index">Seatz</a>
-            </div>
+    <div class="container site-header-inner">
+        <div class="site-header-left">
+            <button type="button" class="back-btn" onclick="backConfirm()">&larr; Back</button>
+            <a class="brand" asp-controller="Select" asp-action="Index">Seatz</a>
+        </div>
+        @* ADDED: wrapper so the existing nav and the new auth links sit together on the right *@
+        <div class="site-header-right">
             <nav class="site-nav">
                 <a class="@(controller == "Select" || controller == "Home" ? "active" : "")" asp-controller="Select" asp-action="Index">Layouts</a>
                 <a class="@(controller == "Creator" ? "active" : "")" asp-controller="Creator" asp-action="Index">Create</a>
             </nav>
+            @* ADDED: login / sign up. Account is the controller name I'm planning for the two pages (arbitrary, but it has to match the controller we build next) *@
+            <div class="auth-links">
+                <a class="auth-login" asp-controller="Account" asp-action="Login">Log in</a>
+                <a class="auth-signup" asp-controller="Account" asp-action="Register">Sign up</a>
+            </div>
         </div>
-    </header>
+    </div>
+</header>
 
     <div class="container">
         <main role="main" class="pb-3">

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace AppLayerMVC.Models;
+namespace BLL.Models;
 public class Seat
 {
     public int Id { get; set; }
@@ -14,4 +14,6 @@ public class Seat
     public bool IsSelected { get; set; } = false;
 
     public int LayoutId { get; set; }
+
+    public string? Img { get; set; } // optional image for this seat
 }

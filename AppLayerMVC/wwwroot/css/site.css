@@ -1,47 +1,86 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 :root {
-    --ink: #17181a;
-    --paper: #f5f2ec;      /* warm off-white page background */
-    --line: #ddd7ca;
-    --accent: #1f6b4a;     /* deep green, same family as the available seats */
+    /* Wraith palette */
+    --wraith-dark: #1E1702;
+    --wraith-light: #E5E3E4;
+    --wraith-muted: #8C886B;
+    --wraith-green: #047C58;
+    --wraith-brown: #342005;
+
+    /* Semantic colors */
+    --ink: var(--wraith-dark);
+    --paper: var(--wraith-light);
+    --line: rgba(140, 136, 107, 0.45);
+    --accent: var(--wraith-green);
+    --accent-dark: #035c42;
+
+    --surface: #eeeced;
+    --surface-dark: #d9d6d7;
+
+    --available: #047C58;
+    --selected: #342005;
+    --booked: #1E1702;
+    --deep: #035c42;
 }
 
+/* =========================================================
+   GLOBAL
+   ========================================================= */
+
 body {
+    margin-bottom: 60px;
     background: var(--paper);
     color: var(--ink);
     font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
-h1, h2, .brand {
-    font-family: "Fraunces", Georgia, serif;   /* the serif is what gives the site some character */
+h1,
+h2,
+.brand {
+    font-family: "Fraunces", Georgia, serif;
     font-weight: 700;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.02em;
 }
 
-/* header */
+::selection {
+    background: var(--wraith-green);
+    color: var(--wraith-light);
+}
+
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
+    box-shadow:
+        0 0 0 0.1rem var(--paper),
+        0 0 0 0.25rem var(--wraith-green);
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
 .site-header {
     border-bottom: 1px solid var(--ink);
     padding: 14px 0;
     margin-bottom: 28px;
 }
+
 .site-header-inner {
     display: flex;
     justify-content: space-between;
@@ -49,7 +88,20 @@ h1, h2, .brand {
     flex-wrap: wrap;
     gap: 12px;
 }
-.site-header-left { display: flex; align-items: center; gap: 18px; }
+
+.site-header-left {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+.site-header-right {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+/* Brand */
 
 .brand {
     font-size: 1.75rem;
@@ -57,38 +109,133 @@ h1, h2, .brand {
     text-decoration: none;
     display: inline-flex;
     align-items: center;
+    transition: opacity 0.2s ease;
 }
-.brand::before {            /* small rounded square: a seat cell, drawn with CSS */
+
+.brand:hover {
+    color: var(--ink);
+    opacity: 0.78;
+}
+
+.brand::before {
     content: "";
-    width: 14px; height: 14px;
+    width: 14px;
+    height: 14px;
     border-radius: 4px;
-    background: var(--accent);
+    background: var(--wraith-green);
     margin-right: 9px;
+    box-shadow: 0 0 0 3px rgba(4, 124, 88, 0.12);
 }
+
+/* Back button */
 
 .back-btn {
     background: transparent;
     border: 1px solid var(--ink);
     border-radius: 999px;
-    padding: 3px 14px;
+    padding: 4px 14px;
     font-size: 0.875rem;
     color: var(--ink);
     cursor: pointer;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
 }
-.back-btn:hover { background: var(--ink); color: var(--paper); }
 
-.site-nav { display: flex; gap: 6px; }
+.back-btn:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+.back-btn:active {
+    transform: translateY(1px);
+}
+
+/* Navigation */
+
+.site-nav {
+    display: flex;
+    gap: 6px;
+}
+
 .site-nav a {
     color: var(--ink);
     text-decoration: none;
     padding: 6px 14px;
     border-radius: 999px;
     font-weight: 500;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
 }
-.site-nav a:hover { background: var(--line); }
-.site-nav a.active { background: var(--ink); color: var(--paper); }
 
-/* footer: height stays 60px to match body's margin-bottom, so fixed buttons at bottom: 70px still clear it */
+.site-nav a:hover {
+    background: rgba(140, 136, 107, 0.22);
+}
+
+.site-nav a.active {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+/* =========================================================
+   AUTH LINKS
+   ========================================================= */
+
+.auth-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.auth-links a {
+    text-decoration: none;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-weight: 500;
+    font-size: 0.9375rem;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
+}
+
+/* Log in */
+
+.auth-login {
+    color: var(--ink);
+    border: 1px solid var(--ink);
+}
+
+.auth-login:hover {
+    background: var(--ink);
+    color: var(--paper);
+}
+
+/* Sign up */
+
+.auth-signup {
+    background: var(--ink);
+    color: var(--paper);
+    border: 1px solid var(--ink);
+}
+
+.auth-signup:hover {
+    background: var(--wraith-green);
+    border-color: var(--wraith-green);
+    color: var(--paper);
+}
+
+.auth-links a:active {
+    transform: translateY(1px);
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
 .footer {
     position: absolute;
     bottom: 0;
@@ -96,36 +243,70 @@ h1, h2, .brand {
     height: 60px;
     line-height: 60px;
     border-top: 1px solid var(--line);
-    color: #6b6a64;
+    color: var(--wraith-muted);
     font-size: 0.875rem;
 }
 
-/* primary buttons follow the same palette instead of Bootstrap blue */
+/* =========================================================
+   BUTTONS
+   ========================================================= */
+
 .btn-primary {
-    --bs-btn-bg: var(--ink);
-    --bs-btn-border-color: var(--ink);
-    --bs-btn-hover-bg: var(--accent);
-    --bs-btn-hover-border-color: var(--accent);
-    --bs-btn-active-bg: var(--accent);
-    --bs-btn-active-border-color: var(--accent);
+    --bs-btn-bg: var(--wraith-dark);
+    --bs-btn-border-color: var(--wraith-dark);
+    --bs-btn-hover-bg: var(--wraith-green);
+    --bs-btn-hover-border-color: var(--wraith-green);
+    --bs-btn-active-bg: var(--wraith-brown);
+    --bs-btn-active-border-color: var(--wraith-brown);
+
+    border-radius: 8px;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.15s ease;
 }
 
-body {
-  margin-bottom: 60px;
+.btn-primary:hover {
+    transform: translateY(-1px);
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* =========================================================
+   FORM ELEMENTS
+   ========================================================= */
+
+.form-control,
+.form-select {
+    border: 1px solid var(--wraith-muted);
+    background: rgba(255, 255, 255, 0.3);
+    color: var(--ink);
+    border-radius: 8px;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--wraith-green);
+    background: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 3px rgba(4, 124, 88, 0.14);
 }
+
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
+    color: var(--wraith-muted);
+    text-align: end;
+}
+
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
+    text-align: start;
+}
+
+/* =========================================================
+   SEAT GRID
+   ========================================================= */
 
 .seat-wrapper {
-  overflow-x: auto;
-  /* REMOVED display:flex: it fights margin:0 auto on the grid and clips wide layouts */
+    overflow-x: auto;
+    padding: 8px;
 }
 
 .seat-grid {
@@ -134,82 +315,125 @@ body {
     gap: 16px;
     margin: 0 auto;
     width: max-content;
-    /* REMOVED background:#ef0808: leftover debug color */
 }
 
+/* =========================================================
+   SEATS
+   ========================================================= */
+
 .seat {
-     display: flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
 
     padding: 15px;
-    border-radius: 8px;
-    border: 1px solid #999;
-    background: #e8f5e9;
-    cursor: pointer;
     width: 100%;
     height: 100%;
-    
+
+    border-radius: 9px;
+    border: 1px solid rgba(4, 124, 88, 0.35);
+
+    background: rgba(4, 124, 88, 0.10);
+    color: var(--wraith-dark);
+
+    cursor: pointer;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.15s ease,
+        box-shadow 0.18s ease;
 }
 
 .seat:hover:not(:disabled) {
-    background: #c8e6c9;
+    background: var(--wraith-green);
+    border-color: var(--wraith-green);
+    color: var(--paper);
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 5px 12px rgba(4, 124, 88, 0.18);
 }
+
+.seat:active {
+    transform: translateY(0);
+}
+
+/* Booked */
 
 .seat.booked {
-
-    background: #ed0b0b;
-    color: #fff;
+    background: var(--wraith-dark);
+    border-color: var(--wraith-dark);
+    color: var(--paper);
     cursor: default;
+    opacity: 0.72;
 }
+
 .seat.booked:hover {
-    background: #ed0b0b;
-    
-    /* cursor: not-allowed; */
+    background: var(--wraith-dark);
+    border-color: var(--wraith-dark);
+    transform: none;
+    box-shadow: none;
 }
+
+/* Selected */
+
+.seat.selected {
+    background: var(--wraith-brown);
+    border-color: var(--wraith-brown);
+    color: var(--paper);
+
+    box-shadow:
+        0 5px 14px rgba(52, 32, 5, 0.22);
+}
+
+.seat.selected:hover {
+    background: var(--wraith-dark);
+    border-color: var(--wraith-dark);
+    color: var(--paper);
+}
+
+/* =========================================================
+   SUMMARY
+   ========================================================= */
 
 .summary {
     position: fixed;
     bottom: 70px;
     right: 20px;
+
     padding: 12px 18px;
-    background: #fff;
-    border: 1px solid #ccc;
+
+    background: rgba(229, 227, 228, 0.94);
+    color: var(--ink);
+
+    border: 1px solid var(--wraith-muted);
     border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+    box-shadow:
+        0 8px 24px rgba(30, 23, 2, 0.14);
+
+    backdrop-filter: blur(8px);
 }
 
-
-.seat:hover:not(:disabled) .seat-price {
-    opacity: 1;           /* show it while hovering an available seat */
-}
-
-.seat.selected {
-    background: #2196f3;
-    color: #fff;
-}
-.seat.selected:hover {
-    background: #1072c3;
-    color: #fff;
-}
-
-.seat:active {
-    background: #000fe5;
-    color: #fff;
-}
+/* =========================================================
+   EDITOR
+   ========================================================= */
 
 .editor-wrapper {
-  overflow: auto;
+    overflow: auto;
 }
 
 .editor-grid {
     display: grid;
-    grid-auto-rows: 60px;   /* SAME as .seat-grid */
-    gap: 16px;              /* SAME as .seat-grid */
+    grid-auto-rows: 60px;
+    gap: 16px;
     margin: 0 auto;
-    width: max-content; 
+    width: max-content;
 }
 
 .cell {
@@ -219,106 +443,271 @@ body {
     justify-content: center;
     position: relative;
 
-    padding: 2px;               /* CHANGED from 15px: label + price must fit inside the cell */
-    font-size: 11px;            /* ADDED: smaller text so two lines fit */
-    white-space: pre-line;      /* ADDED: makes the \n from saveCell show as a line break */
+    padding: 2px;
+    font-size: 11px;
+    white-space: pre-line;
+
     border-radius: 8px;
-    border: 1px solid #999;
-    background: #e8f5e9;
+    border: 1px solid rgba(4, 124, 88, 0.35);
+
+    background: rgba(4, 124, 88, 0.10);
+    color: var(--ink);
+
     width: 100%;
     height: 100%;
+
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        color 0.18s ease,
+        transform 0.15s ease,
+        box-shadow 0.18s ease;
 }
 
 .cell:hover:not(:disabled) {
-    background: #c8e6c9;    /* SAME as .seat:hover:not(:disabled) */
-    cursor: pointer;          /* SAME as .seat:hover:not(:disabled) */
+    background: var(--wraith-green);
+    border-color: var(--wraith-green);
+    color: var(--paper);
+    cursor: pointer;
+
+    transform: translateY(-2px);
 }
 
 .cell:active {
-    background: #000fe5;
-    color: #fff;            /* SAME as .seat:active */
+    background: var(--wraith-brown);
+    border-color: var(--wraith-brown);
+    color: var(--paper);
+    transform: translateY(0);
 }
 
 .cell.selected {
-    background: #2196f3;    /* SAME as .seat.selected */
-    color: #fff;            /* SAME as .seat.selected */
+    background: var(--wraith-brown);
+    border-color: var(--wraith-brown);
+    color: var(--paper);
+
+    box-shadow:
+        0 4px 12px rgba(52, 32, 5, 0.18);
 }
 
-/* ADDED: without this a placed cell turns light green on hover and looks unplaced */
 .cell.selected:hover:not(:disabled) {
-    background: #1072c3;
-    color: #fff;
+    background: var(--wraith-dark);
+    border-color: var(--wraith-dark);
+    color: var(--paper);
 }
+
+/* =========================================================
+   CELL FORM
+   ========================================================= */
 
 .cell-form {
-  
     position: fixed;
     top: 50%;
     left: 50%;
+
     transform: translate(-50%, -50%);
+
     z-index: 10;
+
     display: flex;
     flex-direction: column;
     gap: 8px;
-    padding: 16px;
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+
+    padding: 18px;
+
+    background: var(--paper);
+    color: var(--ink);
+
+    border: 1px solid var(--wraith-muted);
+    border-radius: 12px;
+
+    box-shadow:
+        0 18px 45px rgba(30, 23, 2, 0.22);
 }
 
 .cell-form.hidden {
     display: none;
 }
 
+/* =========================================================
+   SUBMIT FORM
+   ========================================================= */
+
 .submit-form {
     position: relative;
     bottom: 87%;
     left: 90%;
+
     transform: translateX(-50%);
+
     display: flex;
     gap: 8px;
+
     margin-bottom: 16px;
-    
 }
+
+/* =========================================================
+   LEGEND
+   ========================================================= */
 
 .legend {
     display: flex;
     gap: 16px;
     justify-content: center;
+
     margin-bottom: 20px;
+
     font-size: 0.875rem;
 }
-/* CHANGED: the flex row rules belong on .legend-item (the wrapper), not .legend-color */
-.legend-item { display: flex; align-items: center; gap: 6px; }
 
-/* CHANGED: was .legend-swatch, but your markup uses legend-color. This is the dot itself. */
-.legend-color {
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    border: 1px solid #999;
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-.legend-color.available { background: #e8f5e9; }
-.legend-color.selected  { background: #2196f3; }
-.legend-color.booked    { background: #ed0b0b; }
+
+.legend-color {
+    width: 14px;
+    height: 14px;
+
+    border-radius: 50%;
+
+    border: 1px solid var(--wraith-muted);
+}
+
+.legend-color.available {
+    background: var(--wraith-green);
+    border-color: var(--wraith-green);
+}
+
+.legend-color.selected {
+    background: var(--wraith-brown);
+    border-color: var(--wraith-brown);
+}
+
+.legend-color.booked {
+    background: var(--wraith-dark);
+    border-color: var(--wraith-dark);
+}
+
+/* =========================================================
+   LAYOUT SELECTOR
+   ========================================================= */
 
 .select-layout {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     gap: 16px;
     margin: 12px;
 }
 
 .mini-grid {
-    display: grid;           /* required: grid-column/grid-row only work inside a grid */
-    grid-auto-rows: 10px;    /* same as the column width, so cells are squares */
-    gap: 3px;                /* arbitrary */
-    width: max-content;      /* grid shrinks to fit its cells */
+    display: grid;
+    grid-auto-rows: 10px;
+
+    gap: 3px;
+
+    width: max-content;
 }
+
 .mini-seat {
-    background: #e8f5e9;     /* same as an available seat */
-    border: 1px solid #999;
+    background: rgba(4, 124, 88, 0.18);
+
+    border: 1px solid var(--wraith-green);
     border-radius: 2px;
 }
-.mini-seat.booked { background: #ed0b0b; }
+
+.mini-seat.booked {
+    background: var(--wraith-dark);
+    border-color: var(--wraith-dark);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    .site-header-inner {
+        align-items: flex-start;
+    }
+
+    .site-header-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .site-nav {
+        flex-wrap: wrap;
+    }
+
+    .seat-grid {
+        gap: 10px;
+    }
+
+    .summary {
+        right: 10px;
+        left: 10px;
+        bottom: 70px;
+        text-align: center;
+    }
+}
+
+/* =========================================================
+   Login
+   ========================================================= */
+
+   .auth-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 380px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 32px 28px;
+}
+
+.auth-title { margin: 0; color: var(--ink); }
+.auth-sub { margin: 4px 0 24px; color: var(--); }
+
+.auth-field { margin-bottom: 16px; }
+.auth-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--ink);
+}
+.auth-field input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+}
+.auth-field input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+}
+
+.auth-btn {
+    width: 100%;
+    padding: 11px;
+    border: 0;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+.auth-btn:hover { background: var(--deep); }
+
+.auth-error { color: #b3261e; font-size: 13px; }
+.auth-alt { margin-top: 20px; text-align: center; font-size: 14px; color: var(--ink); }
+.auth-alt a { color: var(--accent); }
