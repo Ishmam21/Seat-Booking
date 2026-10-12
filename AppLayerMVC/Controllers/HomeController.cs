@@ -6,7 +6,7 @@ namespace AppLayerMVC.Controllers;
 
 public class HomeController : Controller
 {
-    public static List<Seat> seats = new List<Seat>
+    public static List<SeatModel> seats = new List<SeatModel>
         {
             
             new () { Id = 1, Label = "A2", X=2, Y=1, IsBooked = true, Price = 200 },

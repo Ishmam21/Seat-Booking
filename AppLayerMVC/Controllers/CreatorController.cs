@@ -6,8 +6,8 @@ namespace AppLayerMVC.Controllers;
 public class CreatorController : Controller
 {
 
-    public static List<Layout> layouts = new();
-    public static List<Seat> seats = new();
+    public static List<LayoutModel> layouts = new();
+    public static List<SeatModel> seats = new();
 
     public IActionResult Index()
     {
@@ -17,7 +17,7 @@ public class CreatorController : Controller
     public static int nextLayoutId = 1; // Static variable to keep track of the next layout ID
     public static int nextSeatId = 1;   // Static variable to keep track of the next seat ID
     [HttpPost]
-    public IActionResult SaveLayout([FromBody] Layout newLayoutSeats)
+    public IActionResult SaveLayout([FromBody] LayoutModel newLayoutSeats)
     {
        if (newLayoutSeats == null || newLayoutSeats.Seats.Count == 0)
        {
