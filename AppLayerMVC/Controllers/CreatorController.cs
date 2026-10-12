@@ -1,41 +1,32 @@
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using BLL.Models;
+using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AppLayerMVC.Controllers;
 
+[Authorize(Roles = "Vendor")]
 public class CreatorController : Controller
 {
+    private readonly LayoutService _layouts;
 
-    public static List<LayoutModel> layouts = new();
-    public static List<SeatModel> seats = new();
+    public CreatorController(LayoutService layouts) => _layouts = layouts;
 
-    public IActionResult Index()
+    public IActionResult Index() => View();
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> SaveLayout([FromBody] LayoutModel newLayout)
     {
-        return View();
+        if (newLayout == null || string.IsNullOrWhiteSpace(newLayout.Name) ||
+            newLayout.Seats == null || newLayout.Seats.Count == 0)
+            return BadRequest("A layout name and at least one seat are required.");
+
+        if (newLayout.Seats.Any(seat => string.IsNullOrWhiteSpace(seat.Label) || seat.Price <= 0))
+            return BadRequest("Each seat needs a label and a positive price.");
+
+        var ownerId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        await _layouts.CreateAsync(newLayout, ownerId);
+        return Ok();
     }
-
-    public static int nextLayoutId = 1; // Static variable to keep track of the next layout ID
-    public static int nextSeatId = 1;   // Static variable to keep track of the next seat ID
-    [HttpPost]
-    public IActionResult SaveLayout([FromBody] LayoutModel newLayoutSeats)
-    {
-       if (newLayoutSeats == null || newLayoutSeats.Seats.Count == 0)
-       {
-           return BadRequest("No seats provided.");
-       }
-
-       newLayoutSeats.Id = nextLayoutId++; // Assign a unique ID to the new layout
-
-    
-
-       foreach (var seat in newLayoutSeats.Seats)
-       {
-           seat.Id = nextSeatId++;
-           seat.LayoutId = newLayoutSeats.Id; // Associate the seat with the new layout
-        
-       }
-        layouts.Add(newLayoutSeats);
-       return Ok();
-    }
-    
 }

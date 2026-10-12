@@ -4,8 +4,6 @@ using DAL.Repo;
 
 namespace BLL.Services;
 
-public record AuthUser(int Id, string Email, string DisplayName, string Role);
-
 public class UserService
 {
     private readonly UserRepo _users;

@@ -8,7 +8,7 @@
         <h1 class="auth-title">Seatz</h1>
         <p class="auth-sub">Create your account</p>
 
-        <form asp-controller="Account" asp-action="Register" method="post" novalidate>
+        <form asp-controller="Register" asp-action="Index" method="post" novalidate>
             <div asp-validation-summary="ModelOnly" class="auth-error"></div>
 
             <div class="auth-field">
@@ -48,7 +48,7 @@
         </form>
 
         <p class="auth-alt">
-            Already registered? <a asp-controller="Account" asp-action="Login">Log in</a>
+            Already registered? <a asp-controller="Login" asp-action="Index">Log in</a>
         </p>
     </div>
 </div>

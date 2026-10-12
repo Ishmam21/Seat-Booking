@@ -1,11 +1,13 @@
+using BLL.Services;
 using Microsoft.AspNetCore.Mvc;
-using BLL.Models;
+
 namespace AppLayerMVC.Controllers;
 
 public class SelectController : Controller
 {
-    public IActionResult Index()
-    {
-        return View(CreatorController.layouts);
-    }
+    private readonly LayoutService _layouts;
+
+    public SelectController(LayoutService layouts) => _layouts = layouts;
+
+    public async Task<IActionResult> Index() => View(await _layouts.GetAllAsync());
 }

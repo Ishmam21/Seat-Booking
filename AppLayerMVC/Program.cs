@@ -4,11 +4,21 @@ using DAL.EF;
 using BLL;
 using DAL.Repo;
 using BLL.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Index";
+        options.AccessDeniedPath = "/Login/Index";
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddAntiforgery(options => options.HeaderName = "RequestVerificationToken");
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConn")));
@@ -16,7 +26,11 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<UserRepo>();
-builder.Services.AddScoped<UserService>();   // was AccountService
+builder.Services.AddScoped<LayoutRepo>();
+builder.Services.AddScoped<BookingRepo>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<LayoutService>();
+builder.Services.AddScoped<BookingService>();
 
 var app = builder.Build();
 
@@ -31,6 +45,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

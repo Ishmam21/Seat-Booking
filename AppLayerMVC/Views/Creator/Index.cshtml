@@ -30,4 +30,5 @@
         <button type="submit" class="btn btn-success" id="save-cell">Save</button>   @* type="submit"; onclick removed, since onsubmit handles it *@
         <button type="button" class="btn btn-danger" id="cancel-cell" onclick="cancelCell()">Cancel</button>   @* type="button" so it doesn't submit the form *@
     </form>
+    @Html.AntiForgeryToken()
     

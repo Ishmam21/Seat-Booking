@@ -12,10 +12,17 @@ function calculateTotal() {
     document.getElementById('seat-count').textContent = selectedSeats.length;
 }
 
+function requestToken() {
+    return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+}
+
 async function toggleSeatSelection(btn) {
     const id = parseInt(btn.dataset.id);
 
-    const response = await fetch(`/Home/SelectSeat?id=${id}`, { method: 'POST' });
+    const response = await fetch(`/Home/SelectSeat?id=${id}`, {
+        method: 'POST',
+        headers: { 'RequestVerificationToken': requestToken() }
+    });
 
     if (!response.ok) {
         alert('Seat unavailable');
@@ -25,6 +32,28 @@ async function toggleSeatSelection(btn) {
     btn.classList.toggle('selected');
 
     calculateTotal();
+}
+
+async function bookSelectedSeats() {
+    const selectedSeats = [...document.querySelectorAll('.seat.selected')];
+    if (selectedSeats.length === 0) {
+        alert('Select at least one seat before booking.');
+        return;
+    }
+
+    for (const seat of selectedSeats) {
+        const response = await fetch(`/Home/BookSeat?id=${parseInt(seat.dataset.id)}`, {
+            method: 'POST',
+            headers: { 'RequestVerificationToken': requestToken() }
+        });
+        if (!response.ok) {
+            alert(await response.text() || 'A selected seat could not be booked.');
+            window.location.reload();
+            return;
+        }
+    }
+
+    window.location.reload();
 }
 
 function lockCell(){
@@ -146,7 +175,10 @@ async function submitLayout() {
     const response = await fetch('/Creator/SaveLayout',
         {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': requestToken()
+            },
             body: JSON.stringify(
                 {
                     name: layoutName.trim(),

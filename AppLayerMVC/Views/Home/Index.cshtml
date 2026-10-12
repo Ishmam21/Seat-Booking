@@ -1,5 +1,5 @@
 ﻿@using BLL.Models;
-@model Layout
+@model LayoutModel
 
 
 @{
@@ -28,7 +28,7 @@
     <div>
         <h2>@Model.Name</h2>
     </div>
-    <div class="seat-grid" style="grid-template-columns: repeat(@Model.Seats.Max(s => s.X), 48px)">
+    <div class="seat-grid" style="grid-template-columns: repeat(@(Model.Seats.Count == 0 ? 1 : Model.Seats.Max(s => s.X)), 48px)">
         @foreach (var seat in Model.Seats)
         {
             <button onclick="toggleSeatSelection(this)" class="seat @(seat.IsBooked ? "booked" : "") @(seat.IsSelected ? "selected" : "")"
@@ -45,4 +45,13 @@
 <div class="summary">
     <div>Seats: <strong id="seat-count">0</strong></div>
     <div>Total: <strong id="seat-total">Bdt 0</strong></div>
+    @if (User.IsInRole("Customer"))
+    {
+        <button type="button" class="btn btn-primary" onclick="bookSelectedSeats()">Book selected seats</button>
+    }
+    else if (User.Identity?.IsAuthenticated != true)
+    {
+        <a class="btn btn-primary" asp-controller="Login" asp-action="Index">Log in to book</a>
+    }
 </div>
+@Html.AntiForgeryToken()

@@ -7,10 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AppLayerMVC.Controllers;
 
-public class Login : Controller
+public class LoginController : Controller
 {
     private readonly UserService _users;
-    public Login(UserService users) => _users = users;
+    public LoginController(UserService users) => _users = users;
 
     [HttpGet]
     public IActionResult Index() => View();

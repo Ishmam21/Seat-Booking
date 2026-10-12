@@ -4,10 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AppLayerMVC.Controllers;   // was AppLayerMVC.Register, change it
 
-public class Register : Controller
+public class RegisterController : Controller
 {
     private readonly UserService _users;
-    public Register(UserService users) => _users = users;
+    public RegisterController(UserService users) => _users = users;
 
     [HttpGet]
     public IActionResult Index() => View();

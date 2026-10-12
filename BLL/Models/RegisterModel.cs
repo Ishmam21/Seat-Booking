@@ -4,13 +4,13 @@ namespace BLL.Models;
 
 public class RegisterModel
 {
-    [Required, EmailAddress, StringLength(256)]
+    [Required, EmailAddress(ErrorMessage = "Invalid email address"), StringLength(256)]
     public string Email { get; set; } = "";
 
     [StringLength(100)]
     public string DisplayName { get; set; } = "";
 
-    [Required, MinLength(8)]
+    [Required, MinLength(8,ErrorMessage = "Password must be at least 8 characters long")]
     
     public string Password { get; set; } = "";
 

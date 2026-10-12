@@ -28,10 +28,19 @@
                 <a class="@(controller == "Select" || controller == "Home" ? "active" : "")" asp-controller="Select" asp-action="Index">Layouts</a>
                 <a class="@(controller == "Creator" ? "active" : "")" asp-controller="Creator" asp-action="Index">Create</a>
             </nav>
-            @* ADDED: login / sign up. Account is the controller name I'm planning for the two pages (arbitrary, but it has to match the controller we build next) *@
             <div class="auth-links">
-                <a class="auth-login" asp-controller="Account" asp-action="Login">Log in</a>
-                <a class="auth-signup" asp-controller="Account" asp-action="Register">Sign up</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <span>@User.Identity.Name</span>
+                    <form asp-controller="Login" asp-action="Logout" method="post">
+                        <button class="auth-login" type="submit">Log out</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="auth-login" asp-controller="Login" asp-action="Index">Log in</a>
+                    <a class="auth-signup" asp-controller="Register" asp-action="Index">Sign up</a>
+                }
             </div>
         </div>
     </div>

@@ -6,5 +6,5 @@ public class LayoutModel
     public string Name {get; set;} = "";
     public List<SeatModel> Seats {get; set;} = new ();
 
-    public string OwnerId {get; set;} = "";  // The user who created this layout. Empty string means "no owner" (public layout)
+    public int OwnerId {get; set;}
 }

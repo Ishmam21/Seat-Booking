@@ -1,66 +1,53 @@
 using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using BLL.Models;
+using BLL.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AppLayerMVC.Controllers;
 
 public class HomeController : Controller
 {
-    public static List<SeatModel> seats = new List<SeatModel>
-        {
-            
-            new () { Id = 1, Label = "A2", X=2, Y=1, IsBooked = true, Price = 200 },
-            new () { Id = 2, Label = "A3", X=3, Y=1, IsBooked = false, Price = 200 },
-        
-            new () { Id = 3, Label = "B2", X=2, Y=2, IsBooked = false, Price = 200 },
-            new () { Id = 4, Label = "B3", X=3, Y=2, IsBooked = false, Price = 200 },
-            new () { Id = 5, Label = "C1", X=1, Y=3, IsBooked = false, Price = 400 },
-            new () { Id = 6, Label = "C2", X=2, Y=3, IsBooked = false, Price = 400 },
-            new () { Id = 7, Label = "C3", X=3, Y=3, IsBooked = false, Price = 400 },
-            new () { Id = 8, Label = "C4", X=4, Y=3, IsBooked = true, Price = 400 },
-        };
-    public IActionResult Index()
+    private readonly LayoutService _layouts;
+    private readonly BookingService _bookings;
+
+    public HomeController(LayoutService layouts, BookingService bookings)
     {
-        
-
-        
-
-        return RedirectToAction("Index", "Select");
-    }
-    [HttpPost]
-    public IActionResult SelectSeat(int id)
-    {
-        var seat = CreatorController.layouts.SelectMany(l => l.Seats).FirstOrDefault(s => s.Id == id);
-
-        if (seat == null) return NotFound();
-
-        if (seat.IsBooked) return BadRequest("Seat is already booked.");
-
-        else
-        {
-            seat.IsSelected = !seat.IsSelected; // Toggle selection
-            return Ok();
-        }
-
+        _layouts = layouts;
+        _bookings = bookings;
     }
 
-    public IActionResult Privacy()
+    public IActionResult Index() => RedirectToAction("Index", "Select");
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> SelectSeat(int id)
     {
-        return View();
+        if (!await _layouts.SeatExistsAsync(id)) return NotFound();
+        if (await _bookings.IsSeatBookedAsync(id)) return BadRequest("Seat is already booked.");
+        return Ok();
     }
+
+    [HttpPost, Authorize(Roles = "Customer"), ValidateAntiForgeryToken]
+    public async Task<IActionResult> BookSeat(int id)
+    {
+        var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+        if (!await _bookings.BookSeatAsync(id, userId))
+            return BadRequest("Seat is unavailable.");
+
+        return Ok();
+    }
+
+    public IActionResult Privacy() => View();
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+    public async Task<IActionResult> ViewLayout(int id)
     {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        var layout = await _layouts.GetByIdAsync(id);
+        if (layout == null) return NotFound("The requested layout was not found.");
+        if (layout.Seats.Count == 0) return NotFound("The requested layout has no seats.");
+        return View("Index", layout);
     }
-
-    public IActionResult ViewLayout(int id)   // "id" must be named exactly this: it's filled from the {id?} part of the URL /Home/ViewLayout/3
-{
-    var layout = CreatorController.layouts.FirstOrDefault(l => l.Id == id);   // null if no layout has that id
-    if (layout == null) return NotFound("The requested layout was not found.");   // bad id in the URL: show a 404 instead of crashing
-
-    return View("Index", layout);   // reuse Views/Home/Index.cshtml. The name is needed because without it MVC would look for ViewLayout.cshtml
 }
-}
-
