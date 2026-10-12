@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using BLL.Models;
 using DAL.EF;
+using BLL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DbConn")));
+
+    builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 var app = builder.Build();
 

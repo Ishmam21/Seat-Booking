@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BLL.Models;
-public class Seat
+public class SeatModel
 {
     public int Id { get; set; }
     public string Label { get; set; } = "";

@@ -1,6 +1,6 @@
 namespace BLL.Models;
 
-public class Booking
+public class BookingModel
 {
     public int Id { get; set; }
     public string UserId { get; set; } = "";                  // the customer who booked

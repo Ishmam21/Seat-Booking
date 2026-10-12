@@ -1,6 +1,6 @@
 namespace BLL.Models;
 
-public class Layout
+public class LayoutModel
 {
     public int Id {get; set;}
     public string Name {get; set;} = "";
