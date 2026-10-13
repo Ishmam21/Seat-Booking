@@ -13,17 +13,29 @@ public class LoginController : Controller
     public LoginController(UserService users) => _users = users;
 
     [HttpGet]
-    public IActionResult Index() => View();
+    public IActionResult Index(string? returnUrl)
+    {
+        SetModeNotice(returnUrl);
+        ViewData["ReturnUrl"] = returnUrl;
+        return View();
+    }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> Index(LoginModel model)
+    public async Task<IActionResult> Index(LoginModel model, string? returnUrl)
     {
-        if (!ModelState.IsValid) return View(model);
+        if (!ModelState.IsValid)
+        {
+            SetModeNotice(returnUrl);
+            ViewData["ReturnUrl"] = returnUrl;
+            return View(model);
+        }
 
         var user = await _users.LoginAsync(model);
         if (user == null)
         {
             ModelState.AddModelError("", "Invalid email or password.");
+            SetModeNotice(returnUrl);
+            ViewData["ReturnUrl"] = returnUrl;
             return View(model);
         }
 
@@ -37,7 +49,24 @@ public class LoginController : Controller
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            return Redirect(returnUrl);
+
         return RedirectToAction("Index", "Select");
+    }
+
+    private void SetModeNotice(string? returnUrl)
+    {
+        if (string.IsNullOrWhiteSpace(returnUrl)) return;
+
+        var isVendorPage = returnUrl.StartsWith("/Creator", StringComparison.OrdinalIgnoreCase);
+        var isCustomerPage = returnUrl.StartsWith("/Select", StringComparison.OrdinalIgnoreCase) ||
+                             returnUrl.StartsWith("/Book", StringComparison.OrdinalIgnoreCase);
+
+        if (isVendorPage)
+            ViewData["ModeNotice"] = "This page is for Vendor mode. Log in with a Vendor account to continue.";
+        else if (isCustomerPage)
+            ViewData["ModeNotice"] = "This page is for Customer mode. Log in with a Customer account to continue.";
     }
 
     [HttpPost, ValidateAntiForgeryToken]

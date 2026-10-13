@@ -8,7 +8,7 @@ function calculateTotal() {
     selectedSeats.forEach(seat => {
         total += parseFloat(seat.dataset.price);
     });
-    document.getElementById('seat-total').textContent = `Bdt ${total.toFixed(2)}`;
+    document.getElementById('seat-total').textContent = `BDT ${total.toFixed(2)}`;
     document.getElementById('seat-count').textContent = selectedSeats.length;
 }
 
@@ -19,7 +19,7 @@ function requestToken() {
 async function toggleSeatSelection(btn) {
     const id = parseInt(btn.dataset.id);
 
-    const response = await fetch(`/Home/SelectSeat?id=${id}`, {
+    const response = await fetch(`/Book/SelectSeat?id=${id}`, {
         method: 'POST',
         headers: { 'RequestVerificationToken': requestToken() }
     });
@@ -42,7 +42,7 @@ async function bookSelectedSeats() {
     }
 
     for (const seat of selectedSeats) {
-        const response = await fetch(`/Home/BookSeat?id=${parseInt(seat.dataset.id)}`, {
+        const response = await fetch(`/Book/BookSeat?id=${parseInt(seat.dataset.id)}`, {
             method: 'POST',
             headers: { 'RequestVerificationToken': requestToken() }
         });

@@ -25,16 +25,17 @@
         @* ADDED: wrapper so the existing nav and the new auth links sit together on the right *@
         <div class="site-header-right">
             <nav class="site-nav">
-                <a class="@(controller == "Select" || controller == "Home" ? "active" : "")" asp-controller="Select" asp-action="Index">Layouts</a>
+                <a class="@(controller == "Select" || controller == "Book" ? "active" : "")" asp-controller="Select" asp-action="Index">Layouts</a>
                 <a class="@(controller == "Creator" ? "active" : "")" asp-controller="Creator" asp-action="Index">Create</a>
             </nav>
             <div class="auth-links">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    <span>@User.Identity.Name</span>
+                    
                     <form asp-controller="Login" asp-action="Logout" method="post">
-                        <button class="auth-login" type="submit">Log out</button>
+                        <button class="auth-logout" type="submit">Log out</button>
                     </form>
+                    <span>@User.Identity.Name</span>
                 }
                 else
                 {

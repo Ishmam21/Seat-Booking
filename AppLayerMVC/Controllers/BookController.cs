@@ -7,12 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AppLayerMVC.Controllers;
 
-public class HomeController : Controller
+public class BookController : Controller
 {
     private readonly LayoutService _layouts;
     private readonly BookingService _bookings;
 
-    public HomeController(LayoutService layouts, BookingService bookings)
+    public BookController(LayoutService layouts, BookingService bookings)
     {
         _layouts = layouts;
         _bookings = bookings;
@@ -20,7 +20,7 @@ public class HomeController : Controller
 
     public IActionResult Index() => RedirectToAction("Index", "Select");
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost, Authorize(Roles = "Customer"), ValidateAntiForgeryToken]
     public async Task<IActionResult> SelectSeat(int id)
     {
         if (!await _layouts.SeatExistsAsync(id)) return NotFound();
@@ -43,6 +43,7 @@ public class HomeController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
+    [Authorize(Roles = "Customer")]
     public async Task<IActionResult> ViewLayout(int id)
     {
         var layout = await _layouts.GetByIdAsync(id);

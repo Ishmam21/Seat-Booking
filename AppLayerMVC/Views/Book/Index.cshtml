@@ -1,0 +1,70 @@
+@using BLL.Models;
+@model LayoutModel
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="seat-booking-page">
+    <div class="seat-page-heading">
+        <div>
+            <p class="seat-page-eyebrow">Seat selection</p>
+            <h1>@Model.Name</h1>
+            <p class="seat-page-subtitle">Choose the seats you want. Your total updates as you select.</p>
+        </div>
+    </div>
+
+    <section class="seat-map-panel" aria-label="Seat map">
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color available"></div>
+                <span>Available</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color selected"></div>
+                <span>Selected</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color booked"></div>
+                <span>Booked</span>
+            </div>
+        </div>
+
+        <div class="seat-wrapper">
+            <div class="seat-grid" style="grid-template-columns: repeat(@(Model.Seats.Count == 0 ? 1 : Model.Seats.Max(s => s.X)), 48px)">
+                @foreach (var seat in Model.Seats)
+                {
+                    <button type="button" onclick="toggleSeatSelection(this)" class="seat @(seat.IsBooked ? "booked" : "") @(seat.IsSelected ? "selected" : "")"
+                            style="grid-column: @seat.X; grid-row: @seat.Y;"
+                            data-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" aria-label="Seat @seat.Label, BDT @seat.Price" @(seat.IsBooked ? "disabled" : "")>
+                        <span class="seat-label">@seat.Label</span>
+                        <span class="seat-price">@seat.Price</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </section>
+
+    <section class="booking-summary" aria-label="Booking summary">
+        <div class="booking-summary-stats">
+            <div class="booking-stat">
+                <span class="booking-summary-label">Selected seats</span>
+                <strong class="booking-summary-value" id="seat-count">0</strong>
+            </div>
+            <div class="booking-stat booking-stat-total">
+                <span class="booking-summary-label">Total</span>
+                <strong class="booking-summary-value" id="seat-total">BDT 0</strong>
+            </div>
+        </div>
+        @if (User.IsInRole("Customer"))
+        {
+            <button type="button" class="btn btn-primary" onclick="bookSelectedSeats()">Book selected seats</button>
+        }
+        else if (User.Identity?.IsAuthenticated != true)
+        {
+            <a class="btn btn-primary" asp-controller="Login" asp-action="Index">Log in to book</a>
+        }
+    </section>
+</section>
+
+@Html.AntiForgeryToken()

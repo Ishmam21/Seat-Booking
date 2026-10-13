@@ -10,7 +10,13 @@
         <p class="auth-sub">Log in to continue</p>
 
         <form asp-controller="Login" asp-action="Index" method="post" novalidate>
+            <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
             <div asp-validation-summary="ModelOnly" class="auth-error"></div>
+
+            @if (ViewData["ModeNotice"] is string modeNotice)
+            {
+                <p class="auth-mode-notice" role="status">@modeNotice</p>
+            }
 
             <div class="auth-field">
                 <label asp-for="Email"></label>

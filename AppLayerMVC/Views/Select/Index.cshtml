@@ -1,45 +1,55 @@
-
 @using BLL.Models;
 @model List<LayoutModel>
 
 @{
     ViewData["Title"] = "Select Layout";
 }
-<h1 style="text-align: center;">Select Layout</h1>
 
-<div class="table-container">
-    <table>
-        <tr>
-            <th>Layouts</th>
-        </tr>
-        @foreach (var layout in Model)
-        {
-            <tr>
-                <td>
-                    <div class="select-layout">
-                        <h3>@layout.Name</h3>
-                        <p>@layout.Seats.Count() Seats</p>
-                    <a href="@Url.Action("ViewLayout", "Home", new { id = layout.Id })" class="btn btn-primary">@layout.Name</a>
-                    </div>
-                </td>
-                <td>
-                    @* ADDED: mini preview in its own column. Same grid-column/grid-row idea as the customer view, just 10px cells *@
-            @if (layout.Seats.Count > 0)
+<section class="layout-selection-page">
+    <header class="layout-selection-heading">
+        <p class="seat-page-eyebrow">Seatz</p>
+        <h1>Choose a layout</h1>
+        <p>Pick a seat map to see availability and prices.</p>
+    </header>
+
+    @if (Model.Count == 0)
+    {
+        <div class="layout-empty-state">
+            <h2>No layouts yet</h2>
+            <p>There aren’t any seat layouts to browse right now.</p>
+        </div>
+    }
+    else
+    {
+        <div class="layout-card-grid">
+            @foreach (var layout in Model)
             {
-            <div class="mini-grid" style="grid-template-columns: repeat(@layout.Seats.Max(s => s.X), 10px)">
-                @foreach (var seat in layout.Seats)
-                {
-                    <span class="mini-seat @(seat.IsBooked ? "booked" : "")" style="grid-column: @seat.X; grid-row: @seat.Y;"></span>
-                }
-            </div>
+                <article class="layout-card">
+                    <div class="layout-card-info">
+                        <div>
+                            <h2>@layout.Name</h2>
+                            <p class="layout-seat-count">@layout.Seats.Count seat@(layout.Seats.Count == 1 ? "" : "s")</p>
+                        </div>
+                        <a href="@Url.Action("ViewLayout", "Book", new { id = layout.Id })" class="btn btn-primary">View seats</a>
+                    </div>
+
+                    <div class="layout-preview" role="img" aria-label="Preview of @layout.Name">
+                        @if (layout.Seats.Count > 0)
+                        {
+                            <div class="mini-grid" style="grid-template-columns: repeat(@layout.Seats.Max(seat => seat.X), 12px)">
+                                @foreach (var seat in layout.Seats)
+                                {
+                                    <span class="mini-seat @(seat.IsBooked ? "booked" : "")" style="grid-column: @seat.X; grid-row: @seat.Y;"></span>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="layout-preview-empty">No seats in this layout</span>
+                        }
+                    </div>
+                </article>
             }
-                </td>
-            </tr>
-        }
-    </table>
-</div>
-
-    
-
-
-   
+        </div>
+    }
+</section>
