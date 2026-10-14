@@ -52,7 +52,14 @@
                         <div class="account-dropdown">
                             <div class="account-dropdown-name">@displayName</div>
                             <a class="account-menu-link" asp-controller="Settings" asp-action="Index">Settings</a>
-                            <span class="account-menu-placeholder" aria-disabled="true">My layouts</span>
+                            @if (User.IsInRole("Vendor"))
+                            {
+                                <a class="account-menu-link" asp-controller="MyLayouts" asp-action="Index">My layouts</a>
+                            }
+                            else if (User.IsInRole("Customer"))
+                            {
+                                <span class="account-menu-placeholder" aria-disabled="true">Booked seats</span>
+                            }
                             <form asp-controller="Login" asp-action="Logout" method="post">
                                 <button class="account-logout" type="submit">Log out</button>
                             </form>

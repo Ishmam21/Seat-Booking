@@ -7,4 +7,5 @@ public class LayoutModel
     public List<SeatModel> Seats {get; set;} = new ();
 
     public int OwnerId {get; set;}
+
 }

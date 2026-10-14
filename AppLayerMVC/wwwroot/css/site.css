@@ -571,6 +571,19 @@ h2,
         box-shadow 0.18s ease;
 }
 
+.badge-360 {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    padding: 1px 5px;
+    border-radius: 6px;
+    background: #111;
+    color: #fff;
+    font-size: 10px;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
 .seat:hover:not(.booked):not(.selected):not(:disabled) {
     background: rgba(4, 124, 88, 0.10);
     border-color: var(--wraith-green);
@@ -661,8 +674,16 @@ h2,
 
 .booking-summary-stats {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 36px;
+}
+
+.booking-selected-list {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--wraith-muted);
+    font-size: 0.9rem;
 }
 
 .booking-stat {
@@ -701,6 +722,44 @@ h2,
 .booking-restriction {
     color: var(--wraith-muted);
     font-size: 0.82rem;
+}
+
+.seat-preview-panel {
+    position: fixed;
+    z-index: 30;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 290px;
+    height: 100vh;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+    transform: translateX(-100%);
+    border-right: 1px solid var(--line);
+    background: var(--paper);
+    box-shadow: 12px 0 28px rgba(30, 23, 2, 0.14);
+    transition: transform 0.25s ease;
+}
+
+.seat-preview-panel.open {
+    transform: translateX(0);
+}
+
+.seat-preview-panel h2 {
+    margin: 0;
+}
+
+.seat-preview-panel img {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.seat-preview-panel .btn {
+    width: 100%;
 }
 
 /* =========================================================
@@ -1226,6 +1285,24 @@ h2,
     color: #fff;
     font-size: 1.75rem;
     font-weight: 700;
+}
+
+.seat-image-editor form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.layout-image-preview {
+    display: block;
+    max-width: 100%;
+    max-height: 180px;
+    margin-top: 8px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    object-fit: contain;
 }
 
 .settings-remove-picture {

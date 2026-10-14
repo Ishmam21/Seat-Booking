@@ -1,0 +1,51 @@
+@using BLL.Models
+@model List<LayoutModel>
+
+@{
+    ViewData["Title"] = "My layouts";
+}
+
+<section class="layout-selection-page">
+    <header class="layout-selection-heading">
+        <p class="seat-page-eyebrow">Vendor</p>
+        <h1>My layouts</h1>
+        <p>Choose a layout to update its seats and upload seat images.</p>
+    </header>
+
+    @if (Model.Count == 0)
+    {
+        <div class="layout-empty-state">
+            <h2>You haven’t created any layouts yet</h2>
+            <p>Create a layout first, then you can manage it here.</p>
+            <a class="btn btn-primary" asp-controller="Creator" asp-action="Index">Create a layout</a>
+        </div>
+    }
+    else
+    {
+        <div class="layout-card-grid">
+            @foreach (var layout in Model)
+            {
+                <article class="layout-card">
+                    <div class="layout-card-info">
+                        <div>
+                            <h2>@layout.Name</h2>
+                            <p class="layout-seat-count">@layout.Seats.Count seat@(layout.Seats.Count == 1 ? "" : "s")</p>
+                        </div>
+                        <a class="btn btn-primary" asp-controller="MyLayouts" asp-action="Edit" asp-route-id="@layout.Id">Edit layout</a>
+                    </div>
+                    <div class="layout-preview" role="img" aria-label="Preview of @layout.Name">
+                        @if (layout.Seats.Count > 0)
+                        {
+                            <div class="mini-grid" style="grid-template-columns: repeat(@layout.Seats.Max(seat => seat.X), 12px)">
+                                @foreach (var seat in layout.Seats)
+                                {
+                                    <span class="mini-seat @(seat.IsBooked ? "booked" : "")" style="grid-column: @seat.X; grid-row: @seat.Y;"></span>
+                                }
+                            </div>
+                        }
+                    </div>
+                </article>
+            }
+        </div>
+    }
+</section>

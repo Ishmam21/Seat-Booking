@@ -16,4 +16,10 @@ public class SeatModel
     public int LayoutId { get; set; }
 
     public string? Img { get; set; } // optional image for this seat
+
+    public string? ThumbUrl { get; set; }
+
+    public string? PreviewImageUrl { get; set; }
+
+    public bool HasPreview => !string.IsNullOrWhiteSpace(ThumbUrl);
 }

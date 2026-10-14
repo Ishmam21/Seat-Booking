@@ -10,7 +10,7 @@
         <div>
             <p class="seat-page-eyebrow">Seat selection</p>
             <h1>@Model.Name</h1>
-            <p class="seat-page-subtitle">Choose the seats you want. Your total updates as you select.</p>
+            <p class="seat-page-subtitle">Choose seats to see availability and prices. Seats with a 360° preview open the preview panel.</p>
         </div>
     </div>
 
@@ -34,11 +34,16 @@
             <div class="seat-grid" style="grid-template-columns: repeat(@(Model.Seats.Count == 0 ? 1 : Model.Seats.Max(s => s.X)), 48px)">
                 @foreach (var seat in Model.Seats)
                 {
-                    <button type="button" onclick="toggleSeatSelection(this)" class="seat @(seat.IsBooked ? "booked" : "") @(seat.IsSelected ? "selected" : "")"
+                    <button type="button" class="seat booking-seat @(seat.IsBooked ? "booked" : "")"
                             style="grid-column: @seat.X; grid-row: @seat.Y;"
-                            data-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" aria-label="Seat @seat.Label, BDT @seat.Price" @(seat.IsBooked ? "disabled" : "")>
+                            data-seat-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" data-thumb="@(seat.HasPreview ? seat.ThumbUrl : null)"
+                            aria-label="Seat @seat.Label, BDT @seat.Price" @(seat.IsBooked ? "disabled" : "")>
                         <span class="seat-label">@seat.Label</span>
                         <span class="seat-price">@seat.Price</span>
+                        @if (seat.HasPreview)
+                        {
+                            <span class="badge-360" aria-hidden="true">360°</span>
+                        }
                     </button>
                 }
             </div>
@@ -55,6 +60,7 @@
                 <span class="booking-summary-label">Total</span>
                 <strong class="booking-summary-value" id="seat-total">BDT 0</strong>
             </div>
+            <p class="booking-selected-list" id="selected-list" aria-live="polite">No seats selected</p>
         </div>
         <div class="booking-action">
             @if (User.IsInRole("Customer"))
@@ -69,5 +75,12 @@
         </div>
     </section>
 </section>
+
+<aside id="preview-panel" class="seat-preview-panel" aria-label="Seat preview" aria-hidden="true">
+    <h2 id="preview-title"></h2>
+    <img id="preview-thumb" alt="Seat preview" />
+    <button type="button" id="explore-360" class="btn btn-primary">Explore 360°</button>
+    <button type="button" id="unselect-preview-seat" class="btn btn-secondary">Unselect</button>
+</aside>
 
 @Html.AntiForgeryToken()

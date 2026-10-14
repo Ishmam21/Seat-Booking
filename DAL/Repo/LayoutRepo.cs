@@ -22,6 +22,36 @@ public class LayoutRepo
             .AsNoTracking()
             .FirstOrDefaultAsync(layout => layout.Id == id);
 
+    public Task<List<Layout>> GetByOwnerIdAsync(int ownerId) =>
+        _db.Layouts.Where(layout => layout.OwnerId == ownerId)
+            .Include(layout => layout.Seats)
+                .ThenInclude(seat => seat.Booking)
+            .AsNoTracking()
+            .ToListAsync();
+
+    public async Task<bool> UpdateSeatAsync(int layoutId, int ownerId, int seatId, string label, float price)
+    {
+        var seat = await _db.Seats.FirstOrDefaultAsync(seat => seat.Id == seatId &&
+            seat.LayoutId == layoutId && seat.Layout.OwnerId == ownerId);
+        if (seat == null) return false;
+
+        seat.Label = label;
+        seat.Price = price;
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> UpdateSeatImageAsync(int layoutId, int ownerId, int seatId, string? imageUrl)
+    {
+        var seat = await _db.Seats.FirstOrDefaultAsync(seat => seat.Id == seatId &&
+            seat.LayoutId == layoutId && seat.Layout.OwnerId == ownerId);
+        if (seat == null) return false;
+
+        seat.Img = imageUrl;
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
     public Task<bool> SeatExistsAsync(int seatId) =>
         _db.Seats.AnyAsync(seat => seat.Id == seatId);
 

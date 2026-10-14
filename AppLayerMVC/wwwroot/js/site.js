@@ -2,47 +2,98 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-function calculateTotal() {
-    const selectedSeats = document.querySelectorAll('.seat.selected');//find buttons and return a js node list of all buttons with class seat and selected
-    let total = 0;
-    selectedSeats.forEach(seat => {
-        total += parseFloat(seat.dataset.price);
-    });
-    document.getElementById('seat-total').textContent = `BDT ${total.toFixed(2)}`;
-    document.getElementById('seat-count').textContent = selectedSeats.length;
-}
-
 function requestToken() {
     return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
 }
 
-async function toggleSeatSelection(btn) {
-    const id = parseInt(btn.dataset.id);
+// Keep the cart and the preview focus separate so opening a preview never changes a seat selection.
+const selected = new Set();
+let focusedId = null;
 
-    const response = await fetch(`/Book/SelectSeat?id=${id}`, {
+async function checkSeatAvailability(button) {
+    const response = await fetch(`/Book/SelectSeat?id=${parseInt(button.dataset.seatId)}`, {
         method: 'POST',
         headers: { 'RequestVerificationToken': requestToken() }
     });
 
     if (!response.ok) {
-        alert('Seat unavailable');
+        alert(await response.text() || 'Seat unavailable');
+        return false;
+    }
+
+    return true;
+}
+
+async function handleSeatClick(button) {
+    const id = button.dataset.seatId;
+    const hasPreview = Boolean(button.dataset.thumb);
+
+    if (hasPreview && selected.has(id)) {
+        focusedId = id;
+        renderSeatSelection();
         return;
     }
 
-    btn.classList.toggle('selected');
+    if (!hasPreview && selected.has(id)) {
+        selected.delete(id);
+        focusedId = null;
+        renderSeatSelection();
+        return;
+    }
 
-    calculateTotal();
+    if (!await checkSeatAvailability(button)) return;
+
+    selected.add(id);
+    focusedId = hasPreview ? id : null;
+    renderSeatSelection();
 }
 
+function renderSeatSelection() {
+    const seats = [...document.querySelectorAll('.booking-seat')];
+    seats.forEach(button => button.classList.toggle('selected', selected.has(button.dataset.seatId)));
+
+    const selectedSeats = seats.filter(button => selected.has(button.dataset.seatId));
+    const total = selectedSeats.reduce((sum, button) => sum + parseFloat(button.dataset.price), 0);
+    document.getElementById('seat-count').textContent = selectedSeats.length;
+    document.getElementById('seat-total').textContent = `BDT ${total.toFixed(2)}`;
+    document.getElementById('selected-list').textContent = selectedSeats.length
+        ? `Selected: ${selectedSeats.map(button => button.dataset.label).join(', ')}`
+        : 'No seats selected';
+
+    const panel = document.getElementById('preview-panel');
+    const focusedSeat = seats.find(button => button.dataset.seatId === focusedId && button.dataset.thumb);
+    panel.classList.toggle('open', Boolean(focusedSeat));
+    panel.setAttribute('aria-hidden', focusedSeat ? 'false' : 'true');
+    if (focusedSeat) {
+        document.getElementById('preview-title').textContent = `Seat ${focusedSeat.dataset.label}`;
+        document.getElementById('preview-thumb').src = focusedSeat.dataset.thumb;
+    }
+}
+
+document.addEventListener('click', async event => {
+    const button = event.target.closest('.booking-seat');
+    if (button) await handleSeatClick(button);
+});
+
+document.getElementById('unselect-preview-seat')?.addEventListener('click', () => {
+    if (focusedId !== null) selected.delete(focusedId);
+    focusedId = null;
+    renderSeatSelection();
+});
+
+document.getElementById('explore-360')?.addEventListener('click', () => alert('360 viewer coming soon'));
+
+if (document.getElementById('preview-panel')) renderSeatSelection();
+
 async function bookSelectedSeats() {
-    const selectedSeats = [...document.querySelectorAll('.seat.selected')];
+    const selectedSeats = [...selected].map(id => document.querySelector(`.booking-seat[data-seat-id="${id}"]`)).filter(Boolean);
     if (selectedSeats.length === 0) {
         alert('Select at least one seat before booking.');
         return;
     }
 
     for (const seat of selectedSeats) {
-        const response = await fetch(`/Book/BookSeat?id=${parseInt(seat.dataset.id)}`, {
+        const response = await fetch(`/Book/BookSeat?id=${parseInt(seat.dataset.seatId)}`, {
             method: 'POST',
             headers: { 'RequestVerificationToken': requestToken() }
         });
@@ -124,6 +175,65 @@ function closeForm(){
     document.getElementById('cell-label').value = '';
     document.getElementById('cell-price').value = '';
     unlockCell();
+}
+
+let layoutSeatBeingEdited = null;
+
+function editLayoutSeat(button) {
+    layoutSeatBeingEdited = button;
+    document.getElementById('layout-seat-label').value = button.dataset.label;
+    document.getElementById('layout-seat-price').value = button.dataset.price;
+    document.getElementById('layout-seat-image-id').value = button.dataset.id;
+    const imagePreview = document.getElementById('layout-seat-image-preview');
+    if (button.dataset.img) {
+        imagePreview.src = button.dataset.img;
+        imagePreview.classList.remove('hidden');
+    } else {
+        imagePreview.removeAttribute('src');
+        imagePreview.classList.add('hidden');
+    }
+    document.getElementById('layout-seat-form').classList.remove('hidden');
+}
+
+async function saveLayoutSeat() {
+    const form = document.getElementById('layout-seat-form');
+    const label = document.getElementById('layout-seat-label').value.trim();
+    const price = Number(document.getElementById('layout-seat-price').value);
+
+    if (!layoutSeatBeingEdited || !label || !Number.isFinite(price) || price <= 0) {
+        alert('Enter a seat label and a positive price.');
+        return;
+    }
+
+    const response = await fetch('/MyLayouts/SaveSeat', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'RequestVerificationToken': requestToken()
+        },
+        body: new URLSearchParams({
+            layoutId: form.dataset.layoutId,
+            seatId: layoutSeatBeingEdited.dataset.id,
+            label: label,
+            price: price.toString()
+        })
+    });
+
+    if (!response.ok) {
+        alert(await response.text() || 'Could not update this seat.');
+        return;
+    }
+
+    layoutSeatBeingEdited.dataset.label = label;
+    layoutSeatBeingEdited.dataset.price = price;
+    layoutSeatBeingEdited.querySelector('.seat-label').textContent = label;
+    layoutSeatBeingEdited.querySelector('.seat-price').textContent = price;
+    cancelLayoutSeat();
+}
+
+function cancelLayoutSeat() {
+    document.getElementById('layout-seat-form').classList.add('hidden');
+    layoutSeatBeingEdited = null;
 }
 
 function resetLayout() {

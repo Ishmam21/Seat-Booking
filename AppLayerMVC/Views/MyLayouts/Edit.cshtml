@@ -1,0 +1,65 @@
+@using BLL.Models
+@model LayoutModel
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<section class="seat-booking-page">
+    <div class="seat-page-heading">
+        <p class="seat-page-eyebrow">My layouts</p>
+        <h1>@Model.Name</h1>
+        <p class="seat-page-subtitle">Select a seat to change its label and price or upload an image for that seat.</p>
+    </div>
+
+    @if (TempData["MyLayoutsMessage"] is string message)
+    {
+        <p class="settings-success" role="status">@message</p>
+    }
+    @if (TempData["MyLayoutsError"] is string error)
+    {
+        <p class="auth-error" role="alert">@error</p>
+    }
+
+    <section class="seat-map-panel" aria-label="Edit seat layout">
+        <div class="seat-wrapper">
+            <div class="seat-grid" style="grid-template-columns: repeat(@(Model.Seats.Count == 0 ? 1 : Model.Seats.Max(seat => seat.X)), 48px)">
+                @foreach (var seat in Model.Seats)
+                {
+                    <button type="button" class="seat" onclick="editLayoutSeat(this)"
+                            style="grid-column: @seat.X; grid-row: @seat.Y;"
+                            data-id="@seat.Id" data-label="@seat.Label" data-price="@seat.Price" data-img="@seat.Img">
+                        <span class="seat-label">@seat.Label</span>
+                        <span class="seat-price">@seat.Price</span>
+                    </button>
+                }
+            </div>
+        </div>
+    </section>
+
+    <div id="layout-seat-form" class="cell-form hidden" data-layout-id="@Model.Id">
+        <label for="layout-seat-label">Seat label</label>
+        <input type="text" id="layout-seat-label" maxlength="50" />
+        <label for="layout-seat-price">Price (BDT)</label>
+        <input type="number" id="layout-seat-price" min="0.01" step="0.01" />
+        <button type="button" class="btn btn-success" onclick="saveLayoutSeat()">Save seat</button>
+        <button type="button" class="btn btn-secondary" onclick="cancelLayoutSeat()">Cancel</button>
+        <div class="seat-image-editor">
+            <label>Seat image</label>
+            <img id="layout-seat-image-preview" class="layout-image-preview hidden" alt="Current seat image" />
+            <form asp-controller="MyLayouts" asp-action="UploadSeatImage" method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+                <input type="hidden" name="layoutId" value="@Model.Id" />
+                <input type="hidden" name="seatId" id="layout-seat-image-id" />
+                <input id="seatImage" name="seatImage" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" required />
+                <button class="btn btn-primary" type="submit">Upload seat image</button>
+                <small>JPG, PNG, or WEBP up to 50 MB.</small>
+            </form>
+        </div>
+    </div>
+
+    <a class="btn btn-secondary" asp-controller="MyLayouts" asp-action="Index">Back to my layouts</a>
+</section>
+
+@Html.AntiForgeryToken()
+
