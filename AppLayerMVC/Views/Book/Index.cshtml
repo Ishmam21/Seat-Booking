@@ -56,14 +56,17 @@
                 <strong class="booking-summary-value" id="seat-total">BDT 0</strong>
             </div>
         </div>
-        @if (User.IsInRole("Customer"))
-        {
-            <button type="button" class="btn btn-primary" onclick="bookSelectedSeats()">Book selected seats</button>
-        }
-        else if (User.Identity?.IsAuthenticated != true)
-        {
-            <a class="btn btn-primary" asp-controller="Login" asp-action="Index">Log in to book</a>
-        }
+        <div class="booking-action">
+            @if (User.IsInRole("Customer"))
+            {
+                <button type="button" class="btn btn-primary" onclick="bookSelectedSeats()">Book selected seats</button>
+            }
+            else
+            {
+                <button type="button" class="btn btn-primary" disabled aria-describedby="booking-restriction">Book selected seats</button>
+                <span id="booking-restriction" class="booking-restriction">Booking is available to Customer accounts.</span>
+            }
+        </div>
     </section>
 </section>
 

@@ -31,11 +31,33 @@
             <div class="auth-links">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
-                    
-                    <form asp-controller="Login" asp-action="Logout" method="post">
-                        <button class="auth-logout" type="submit">Log out</button>
-                    </form>
-                    <span>@User.Identity.Name</span>
+                    var displayName = User.Identity.Name ?? "Account";
+                    var picture = User.FindFirst("picture")?.Value;
+                    var avatarInitial = displayName.Trim().Length > 0
+                        ? displayName.Trim()[0].ToString().ToUpperInvariant()
+                        : "U";
+
+                    <details class="account-menu">
+                        <summary class="account-trigger" aria-label="Account menu">
+                            <span class="account-name">@displayName</span>
+                            @if (!string.IsNullOrWhiteSpace(picture) && picture != "/images/default-avatar.png")
+                            {
+                                <img class="avatar" src="@picture" alt="Profile" />
+                            }
+                            else
+                            {
+                                <span class="avatar avatar-initial" aria-hidden="true">@avatarInitial</span>
+                            }
+                        </summary>
+                        <div class="account-dropdown">
+                            <div class="account-dropdown-name">@displayName</div>
+                            <a class="account-menu-link" asp-controller="Settings" asp-action="Index">Settings</a>
+                            <span class="account-menu-placeholder" aria-disabled="true">My layouts</span>
+                            <form asp-controller="Login" asp-action="Logout" method="post">
+                                <button class="account-logout" type="submit">Log out</button>
+                            </form>
+                        </div>
+                    </details>
                 }
                 else
                 {

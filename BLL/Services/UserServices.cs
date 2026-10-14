@@ -37,6 +37,43 @@ public class UserService
         if (!BCrypt.Net.BCrypt.Verify(m.Password, user.PasswordHash))
             return null;
 
-        return new AuthUser(user.Id, user.Email, user.DisplayName, user.Role);
+        return new AuthUser(user.Id, user.Email, user.DisplayName, user.Role, user.ProfilePictureUrl);
     }
+
+    public async Task<AccountSettingsModel?> GetAccountSettingsAsync(int id)
+    {
+        var user = await _users.GetByIdAsync(id);
+        if (user == null) return null;
+
+        return new AccountSettingsModel
+        {
+            Email = user.Email,
+            DisplayName = user.DisplayName,
+            Role = user.Role,
+            ProfilePictureUrl = user.ProfilePictureUrl
+        };
+    }
+
+    public async Task<(AuthUser? User, string? Error)> UpdateAccountAsync(int id, AccountSettingsModel model)
+    {
+        var user = await _users.GetByIdAsync(id);
+        if (user == null) return (null, "Account not found.");
+
+        if (!string.IsNullOrWhiteSpace(model.NewPassword))
+        {
+            if (string.IsNullOrWhiteSpace(model.CurrentPassword) ||
+                !BCrypt.Net.BCrypt.Verify(model.CurrentPassword, user.PasswordHash))
+                return (null, "Enter your current password to change your password.");
+
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword, workFactor: 12);
+        }
+
+        user.DisplayName = model.DisplayName.Trim();
+        user.ProfilePictureUrl = model.ProfilePictureUrl;
+        await _users.UpdateAsync(user);
+
+        return (new AuthUser(user.Id, user.Email, user.DisplayName, user.Role, user.ProfilePictureUrl), null);
+    }
+
+    public Task<bool> DeleteAccountAsync(int id) => _users.DeleteAsync(id);
 }

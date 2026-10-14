@@ -46,6 +46,8 @@ public class LoginController : Controller
             new(ClaimTypes.Name, string.IsNullOrWhiteSpace(user.DisplayName) ? user.Email : user.DisplayName),
             new(ClaimTypes.Role, user.Role)
         };
+        if (!string.IsNullOrWhiteSpace(user.ProfilePictureUrl))
+            claims.Add(new Claim("picture", user.ProfilePictureUrl));
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(identity));
 

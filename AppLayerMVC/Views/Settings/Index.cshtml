@@ -1,0 +1,94 @@
+@model BLL.Models.AccountSettingsModel
+
+@{
+    ViewData["Title"] = "Settings";
+    var displayName = Model.DisplayName?.Trim() ?? string.Empty;
+    var avatarInitial = displayName.Length > 0 ? displayName[0].ToString().ToUpperInvariant() : "U";
+}
+
+<div class="settings-wrap">
+    <section class="settings-card">
+        <h1 class="auth-title">Settings</h1>
+        <p class="auth-sub">Update your account information</p>
+
+        @if (TempData["SettingsMessage"] is string message)
+        {
+            <p class="settings-success" role="status">@message</p>
+        }
+
+        <form asp-controller="Settings" asp-action="Index" method="post" enctype="multipart/form-data" novalidate>
+            <div asp-validation-summary="ModelOnly" class="auth-error"></div>
+
+            <div class="auth-field">
+                <span class="settings-readonly-label">Email</span>
+                <span class="settings-readonly-value">@Model.Email</span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="DisplayName">Display name</label>
+                <input asp-for="DisplayName" autocomplete="nickname" />
+                <span asp-validation-for="DisplayName" class="auth-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <span class="settings-readonly-label">Account mode</span>
+                <span class="settings-readonly-value">@Model.Role</span>
+            </div>
+
+            <div class="auth-field">
+                <label for="profilePicture">Profile picture</label>
+                @if (!string.IsNullOrWhiteSpace(Model.ProfilePictureUrl) && Model.ProfilePictureUrl != "/images/default-avatar.png")
+                {
+                    <img class="settings-picture-preview" src="@Model.ProfilePictureUrl" alt="Current profile picture" />
+                    <button type="submit" name="RemoveProfilePicture" value="true" class="settings-remove-picture">
+                        Remove profile picture
+                    </button>
+                }
+                else
+                {
+                    <span class="settings-picture-initial" aria-hidden="true">@avatarInitial</span>
+                }
+                <input id="profilePicture" name="profilePicture" type="file" accept=".jpg,.jpeg,.png,.gif,.webp,image/jpeg,image/png,image/gif,image/webp" />
+                <small>Choose a JPG, PNG, GIF, or WEBP image up to 5 MB.</small>
+            </div>
+
+            <div class="settings-password-heading">
+                <h2>Change password</h2>
+                <p>Leave these fields blank to keep your current password.</p>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="CurrentPassword">Current password</label>
+                <input asp-for="CurrentPassword" type="password" autocomplete="current-password" />
+                <span asp-validation-for="CurrentPassword" class="auth-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="NewPassword">New password</label>
+                <input asp-for="NewPassword" type="password" autocomplete="new-password" />
+                <span asp-validation-for="NewPassword" class="auth-error"></span>
+            </div>
+
+            <div class="auth-field">
+                <label asp-for="ConfirmNewPassword">Confirm new password</label>
+                <input asp-for="ConfirmNewPassword" type="password" autocomplete="new-password" />
+                <span asp-validation-for="ConfirmNewPassword" class="auth-error"></span>
+            </div>
+
+            <button type="submit" class="auth-btn">Save changes</button>
+        </form>
+
+        <section class="settings-delete">
+            <h2>Delete account</h2>
+            <p>This permanently deletes your account, your layouts, and your bookings.</p>
+            <form asp-controller="Settings" asp-action="DeleteAccount" method="post"
+                  onsubmit="return confirm('Delete your account, layouts, and bookings? This cannot be undone.');">
+                <button type="submit" class="settings-delete-button">Delete my account</button>
+            </form>
+        </section>
+    </section>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

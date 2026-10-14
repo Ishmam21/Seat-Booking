@@ -15,6 +15,8 @@ public partial class User
 
     public string Role { get; set; } = null!;
 
+    public string? ProfilePictureUrl { get; set; }
+
     public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
     public virtual ICollection<Layout> Layouts { get; set; } = new List<Layout>();

@@ -268,6 +268,148 @@ h2,
     transform: translateY(1px);
 }
 
+.account-menu {
+    position: relative;
+}
+
+.account-trigger {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 6px 4px 12px;
+    color: var(--ink);
+    border: 1px solid transparent;
+    border-radius: 999px;
+    cursor: pointer;
+    list-style: none;
+    transition: background 0.18s ease, border-color 0.18s ease;
+}
+
+.account-trigger::-webkit-details-marker {
+    display: none;
+}
+
+.account-trigger::marker {
+    content: "";
+}
+
+.account-trigger:hover,
+.account-menu[open] .account-trigger,
+.account-menu:focus-within .account-trigger {
+    background: rgba(140, 136, 107, 0.14);
+    border-color: var(--line);
+}
+
+.account-name {
+    max-width: 180px;
+    overflow: hidden;
+    font-size: 0.9rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.avatar {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-initial {
+    background: var(--wraith-green);
+    border-color: var(--wraith-green);
+    color: #fff;
+    font-weight: 700;
+}
+
+.account-dropdown {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 6px);
+    right: 0;
+    display: flex;
+    width: 210px;
+    flex-direction: column;
+    padding: 8px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(30, 23, 2, 0.16);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    visibility: hidden;
+}
+
+.account-menu:hover .account-dropdown,
+.account-menu:focus-within .account-dropdown,
+.account-menu[open] .account-dropdown {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.account-dropdown-name,
+.account-menu-link,
+.account-menu-placeholder,
+.account-logout {
+    padding: 10px 12px;
+    text-align: left;
+}
+
+.account-dropdown-name {
+    overflow: hidden;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.account-menu-placeholder {
+    color: var(--wraith-muted);
+    font-size: 0.9rem;
+}
+
+.account-dropdown .account-menu-link {
+    display: block;
+    color: var(--ink);
+    font-size: 0.9rem;
+    text-decoration: none;
+}
+
+.account-dropdown .account-menu-link:hover,
+.account-dropdown .account-menu-link:focus-visible {
+    background: rgba(140, 136, 107, 0.14);
+}
+
+.account-dropdown form {
+    margin-top: 4px;
+    border-top: 1px solid var(--line);
+}
+
+.account-logout {
+    width: 100%;
+    background: transparent;
+    border: 0;
+    border-radius: 7px;
+    color: #b3261e;
+    cursor: pointer;
+    font: inherit;
+}
+
+.account-logout:hover,
+.account-logout:focus-visible {
+    background: rgba(179, 38, 30, 0.09);
+}
+
 /* =========================================================
    FOOTER
    ========================================================= */
@@ -547,6 +689,18 @@ h2,
 .booking-summary .btn {
     min-width: 180px;
     padding: 10px 18px;
+}
+
+.booking-action {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.booking-restriction {
+    color: var(--wraith-muted);
+    font-size: 0.82rem;
 }
 
 /* =========================================================
@@ -860,6 +1014,14 @@ h2,
         padding-top: 0;
     }
 
+    .settings-wrap {
+        padding: 12px 0 32px;
+    }
+
+    .settings-card {
+        padding: 24px 18px;
+    }
+
     .layout-card {
         grid-template-columns: minmax(0, 1fr);
         gap: 14px;
@@ -916,6 +1078,11 @@ h2,
 
     .booking-summary .btn {
         width: 100%;
+    }
+
+    .booking-action {
+        align-items: stretch;
+        flex-direction: column;
     }
 
     .summary {
@@ -995,3 +1162,147 @@ h2,
 .auth-error { color: #b3261e; font-size: 13px; }
 .auth-alt { margin-top: 20px; text-align: center; font-size: 14px; color: var(--ink); }
 .auth-alt a { color: var(--accent); }
+
+.settings-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 28px 16px 48px;
+}
+
+.settings-card {
+    width: 100%;
+    max-width: 560px;
+    padding: 32px 28px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(30, 23, 2, 0.08);
+}
+
+.settings-card h2 {
+    margin: 24px 0 4px;
+    font-size: 1.2rem;
+}
+
+.settings-card small {
+    display: block;
+    margin-top: 6px;
+    color: var(--wraith-muted);
+}
+
+.settings-readonly-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--ink);
+    font-size: 14px;
+}
+
+.settings-readonly-value {
+    display: block;
+    overflow-wrap: anywhere;
+    color: var(--wraith-muted);
+}
+
+.settings-picture-preview {
+    display: block;
+    width: 76px;
+    height: 76px;
+    margin: 0 0 10px;
+    border: 1px solid var(--line);
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.settings-picture-initial {
+    display: inline-flex;
+    width: 76px;
+    height: 76px;
+    align-items: center;
+    justify-content: center;
+    margin: 0 0 10px;
+    border: 1px solid var(--wraith-green);
+    border-radius: 50%;
+    background: var(--wraith-green);
+    color: #fff;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.settings-remove-picture {
+    display: block;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--wraith-muted);
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+}
+
+.settings-remove-picture:hover,
+.settings-remove-picture:focus-visible {
+    color: var(--wraith-green);
+}
+
+.settings-password-heading {
+    padding-top: 4px;
+    border-top: 1px solid var(--line);
+}
+
+.settings-password-heading p {
+    margin: 0 0 16px;
+    color: var(--wraith-muted);
+    font-size: 0.9rem;
+}
+
+.settings-success {
+    margin-bottom: 18px;
+    padding: 11px 13px;
+    color: var(--ink);
+    background: rgba(4, 124, 88, 0.09);
+    border: 1px solid rgba(4, 124, 88, 0.28);
+    border-radius: 8px;
+}
+
+.settings-delete {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+}
+
+.settings-delete h2 {
+    margin: 0 0 5px;
+    color: #b3261e;
+}
+
+.settings-delete p {
+    margin: 0 0 14px;
+    color: var(--wraith-muted);
+    font-size: 0.9rem;
+}
+
+.settings-delete-button {
+    padding: 9px 14px;
+    background: transparent;
+    border: 1px solid #b3261e;
+    border-radius: 7px;
+    color: #b3261e;
+    cursor: pointer;
+    font: inherit;
+}
+
+.settings-delete-button:hover,
+.settings-delete-button:focus-visible {
+    background: #b3261e;
+    color: #fff;
+}
+
+
+
+.avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--ink);
+}

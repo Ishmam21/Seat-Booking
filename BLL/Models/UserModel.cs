@@ -12,5 +12,7 @@ public class UserModel   // named UserModel from the start so it won't clash wit
 
     [Required,RegularExpression(@"^Vendor$|^Customer$")]
     public string Role { get; set; } = "Customer";    // "Vendor" or "Customer", same two values the database CHECK allows
+    public string? ProfilePictureUrl { get; set; }    // optional profile picture URL
+    
     // no PasswordHash here on purpose: the hash stays in the DAL entity so it never reaches a view or JSON
 }

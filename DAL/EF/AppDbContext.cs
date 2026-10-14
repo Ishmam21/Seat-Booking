@@ -115,6 +115,7 @@ public partial class AppDbContext : DbContext
                 .HasColumnName("display_name");
             entity.Property(e => e.Email).HasColumnName("email");
             entity.Property(e => e.PasswordHash).HasColumnName("password_hash");
+            entity.Property(e => e.ProfilePictureUrl).HasColumnName("profile_picture_url");
             entity.Property(e => e.Role).HasColumnName("role");
         });
 

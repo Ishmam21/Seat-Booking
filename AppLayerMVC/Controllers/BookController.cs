@@ -20,7 +20,7 @@ public class BookController : Controller
 
     public IActionResult Index() => RedirectToAction("Index", "Select");
 
-    [HttpPost, Authorize(Roles = "Customer"), ValidateAntiForgeryToken]
+    [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> SelectSeat(int id)
     {
         if (!await _layouts.SeatExistsAsync(id)) return NotFound();
@@ -43,7 +43,6 @@ public class BookController : Controller
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error() => View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 
-    [Authorize(Roles = "Customer")]
     public async Task<IActionResult> ViewLayout(int id)
     {
         var layout = await _layouts.GetByIdAsync(id);
