@@ -1,0 +1,36 @@
+@using BLL.Models
+@model SeatModel
+
+@{
+    ViewData["Title"] = $"Seat image — {Model.Label}";
+    var imageUrl = Model.PreviewImageUrl ?? Model.ThumbUrl;
+}
+
+<section class="seat-image-page">
+    <header class="seat-image-heading">
+        <p class="seat-page-eyebrow">Seat preview</p>
+        <h1>Seat @Model.Label</h1>
+    </header>
+
+    <div class="seat-image-frame">
+        @* Pannellum renders into a div and needs an explicit height. *@
+        <div id="panorama" aria-label="360 degree preview for seat @Model.Label" style="width:100%; height:500px;"></div>
+    </div>
+
+    <a class="btn btn-secondary" href="javascript:history.back()">Back to seats</a>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.css" />
+}
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pannellum/2.5.6/pannellum.js"></script>
+    <script>
+        pannellum.viewer('panorama', {
+            type: 'equirectangular',
+            panorama: @Json.Serialize(imageUrl),
+            autoLoad: true
+        });
+    </script>
+}

@@ -18,6 +18,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>cd639cc3-6651-4572-b5cf-23de92fd5587</UserSecretsId>
+    <DefaultItemExcludes>$(DefaultItemExcludes);**/wwwroot/images/seat-images/**</DefaultItemExcludes>
   </PropertyGroup>
 
 </Project>

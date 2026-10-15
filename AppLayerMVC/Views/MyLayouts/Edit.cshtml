@@ -31,6 +31,10 @@
                             data-id="@seat.Id" data-label="@seat.Label" data-price="@seat.Price" data-img="@seat.Img">
                         <span class="seat-label">@seat.Label</span>
                         <span class="seat-price">@seat.Price</span>
+                        @if (seat.HasPreview)
+                        {
+                            <span class="badge-360" aria-label="360° preview published">360°</span>
+                        }
                     </button>
                 }
             </div>

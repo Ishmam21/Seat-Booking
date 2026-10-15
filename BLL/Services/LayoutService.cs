@@ -66,17 +66,10 @@ public class LayoutService
                 Img = seat.Img,
                 LayoutId = seat.LayoutId,
                 IsBooked = seat.Booking != null,
-                // IDs 1-3 provide sample previews because this project reads seats from PostgreSQL, not an in-memory list.
-                ThumbUrl = !string.IsNullOrWhiteSpace(seat.Img) || seat.Id <= 3 ? CreateSampleThumb(seat.Label) : null,
+                ThumbUrl = seat.Img,
                 PreviewImageUrl = seat.Img
             }).ToList()
         };
     }
 
-    private static string CreateSampleThumb(string label)
-    {
-        var safeLabel = System.Security.SecurityElement.Escape(label) ?? "Seat";
-        var svg = $"<svg xmlns='http://www.w3.org/2000/svg' width='240' height='140'><rect width='100%' height='100%' fill='#cbd5e1'/><text x='50%' y='50%' text-anchor='middle' font-size='22' fill='#334155'>View from {safeLabel}</text></svg>";
-        return "data:image/svg+xml;charset=utf-8," + Uri.EscapeDataString(svg);
-    }
 }

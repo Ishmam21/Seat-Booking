@@ -27,24 +27,32 @@ async function checkSeatAvailability(button) {
 async function handleSeatClick(button) {
     const id = button.dataset.seatId;
     const hasPreview = Boolean(button.dataset.thumb);
+    const isBooked = button.dataset.booked === 'true';
 
-    if (hasPreview && selected.has(id)) {
-        focusedId = id;
-        renderSeatSelection();
-        return;
-    }
-
-    if (!hasPreview && selected.has(id)) {
+    if (selected.has(id)) {
+        if (hasPreview) {
+            focusedId = id;
+            renderSeatSelection();
+            return;
+        }
         selected.delete(id);
         focusedId = null;
         renderSeatSelection();
         return;
     }
 
+    if (hasPreview) {
+        focusedId = id;
+        renderSeatSelection();
+    }
+
+    // Booked seats can still open their preview, but cannot be selected.
+    if (isBooked) return;
+
     if (!await checkSeatAvailability(button)) return;
 
     selected.add(id);
-    focusedId = hasPreview ? id : null;
+    if (!hasPreview) focusedId = null;
     renderSeatSelection();
 }
 
@@ -62,11 +70,18 @@ function renderSeatSelection() {
 
     const panel = document.getElementById('preview-panel');
     const focusedSeat = seats.find(button => button.dataset.seatId === focusedId && button.dataset.thumb);
+    const previewImage = document.getElementById('preview-thumb');
+    const previewImageError = document.getElementById('preview-image-error');
     panel.classList.toggle('open', Boolean(focusedSeat));
     panel.setAttribute('aria-hidden', focusedSeat ? 'false' : 'true');
     if (focusedSeat) {
         document.getElementById('preview-title').textContent = `Seat ${focusedSeat.dataset.label}`;
-        document.getElementById('preview-thumb').src = focusedSeat.dataset.thumb;
+        previewImageError.hidden = true;
+        previewImage.onerror = () => {
+            previewImage.removeAttribute('src');
+            previewImageError.hidden = false;
+        };
+        previewImage.src = focusedSeat.dataset.thumb;
     }
 }
 
@@ -81,7 +96,9 @@ document.getElementById('unselect-preview-seat')?.addEventListener('click', () =
     renderSeatSelection();
 });
 
-document.getElementById('explore-360')?.addEventListener('click', () => alert('360 viewer coming soon'));
+document.getElementById('explore-360')?.addEventListener('click', () => {
+    if (focusedId !== null) window.location.href = `/Book/Preview360/${encodeURIComponent(focusedId)}`;
+});
 
 if (document.getElementById('preview-panel')) renderSeatSelection();
 

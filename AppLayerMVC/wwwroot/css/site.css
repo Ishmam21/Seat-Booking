@@ -758,6 +758,28 @@ h2,
     object-fit: cover;
 }
 
+.preview-image-error {
+    color: #a12622;
+    font-size: 0.9rem;
+}
+
+.seat-image-page {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 0 48px;
+}
+
+.seat-image-heading {
+    margin-bottom: 20px;
+}
+
+.seat-image-frame {
+    margin-bottom: 18px;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #101315;
+}
+
 .seat-preview-panel .btn {
     width: 100%;
 }

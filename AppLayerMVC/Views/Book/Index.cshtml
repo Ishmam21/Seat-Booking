@@ -10,7 +10,7 @@
         <div>
             <p class="seat-page-eyebrow">Seat selection</p>
             <h1>@Model.Name</h1>
-            <p class="seat-page-subtitle">Choose seats to see availability and prices. Seats with a 360° preview open the preview panel.</p>
+            <p class="seat-page-subtitle">Click a seat with a 360° badge to open its image preview, then choose Explore 360° to view the image.</p>
         </div>
     </div>
 
@@ -36,8 +36,10 @@
                 {
                     <button type="button" class="seat booking-seat @(seat.IsBooked ? "booked" : "")"
                             style="grid-column: @seat.X; grid-row: @seat.Y;"
-                            data-seat-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label" data-thumb="@(seat.HasPreview ? seat.ThumbUrl : null)"
-                            aria-label="Seat @seat.Label, BDT @seat.Price" @(seat.IsBooked ? "disabled" : "")>
+                            data-seat-id="@seat.Id" data-price="@seat.Price" data-label="@seat.Label"
+                            data-booked="@seat.IsBooked.ToString().ToLowerInvariant()"
+                            data-thumb="@(seat.PreviewImageUrl ?? seat.ThumbUrl)"
+                            aria-label="Seat @seat.Label, BDT @seat.Price@(seat.IsBooked ? ", booked" : "")">
                         <span class="seat-label">@seat.Label</span>
                         <span class="seat-price">@seat.Price</span>
                         @if (seat.HasPreview)
@@ -79,6 +81,7 @@
 <aside id="preview-panel" class="seat-preview-panel" aria-label="Seat preview" aria-hidden="true">
     <h2 id="preview-title"></h2>
     <img id="preview-thumb" alt="Seat preview" />
+    <p id="preview-image-error" class="preview-image-error" role="status" hidden>Seat image could not be loaded.</p>
     <button type="button" id="explore-360" class="btn btn-primary">Explore 360°</button>
     <button type="button" id="unselect-preview-seat" class="btn btn-secondary">Unselect</button>
 </aside>

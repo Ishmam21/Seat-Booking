@@ -50,4 +50,14 @@ public class BookController : Controller
         if (layout.Seats.Count == 0) return NotFound("The requested layout has no seats.");
         return View("Index", layout);
     }
+
+    public async Task<IActionResult> Preview360(int id)
+    {
+        var layouts = await _layouts.GetAllAsync();
+        var seat = layouts.SelectMany(layout => layout.Seats).FirstOrDefault(item => item.Id == id);
+        if (seat == null || !seat.HasPreview) return NotFound();
+
+        return View("Preview360", seat);
+    }
+
 }
