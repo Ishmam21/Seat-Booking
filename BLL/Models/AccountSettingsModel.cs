@@ -17,7 +17,8 @@ public class AccountSettingsModel
 
     public string? CurrentPassword { get; set; }
 
-    [MinLength(8, ErrorMessage = "Password must be at least 8 characters long")]
+    // WHY: Password changes follow the same server-side strength rule as registration while blank remains allowed.
+    [RegularExpression(@"^(?=.*[0-9])(?=.*[^A-Za-z0-9\s]).{6,}$", ErrorMessage = "Password must be at least 6 characters and include at least 1 number and 1 special character.")]
     public string? NewPassword { get; set; }
 
     [Compare(nameof(NewPassword), ErrorMessage = "Passwords don't match")]
