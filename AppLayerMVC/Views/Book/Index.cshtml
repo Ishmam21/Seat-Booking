@@ -10,7 +10,7 @@
         <div>
             <p class="seat-page-eyebrow">Seat selection</p>
             <h1>@Model.Name</h1>
-            <p class="seat-page-subtitle">Click a seat with a 360° badge to open its image preview, then choose Explore 360° to view the image.</p>
+            <p class="seat-page-subtitle">Choose available seats, then continue to checkout. You can sign in or check out as a guest.</p>
         </div>
     </div>
 
@@ -65,15 +65,20 @@
             <p class="booking-selected-list" id="selected-list" aria-live="polite">No seats selected</p>
         </div>
         <div class="booking-action">
-            @if (User.IsInRole("Customer"))
-            {
-                <button type="button" class="btn btn-primary" onclick="bookSelectedSeats()">Book selected seats</button>
-            }
-            else
-            {
-                <button type="button" class="btn btn-primary" disabled aria-describedby="booking-restriction">Book selected seats</button>
-                <span id="booking-restriction" class="booking-restriction">Booking is available to Customer accounts.</span>
-            }
+            <form id="checkout-form" asp-controller="Book" asp-action="Checkout" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="layoutId" value="@Model.Id" />
+                <div id="checkout-seat-ids"></div>
+                @if (User.IsInRole("Vendor"))
+                {
+                    <button type="button" class="btn btn-primary" disabled aria-describedby="booking-restriction">Continue to checkout</button>
+                    <span id="booking-restriction" class="booking-restriction">Vendor accounts can’t book seats.</span>
+                }
+                else
+                {
+                    <button type="button" class="btn btn-primary" onclick="bookSelectedSeats()">Continue to checkout</button>
+                }
+            </form>
         </div>
     </section>
 </section>
@@ -86,4 +91,3 @@
     <button type="button" id="unselect-preview-seat" class="btn btn-secondary">Unselect</button>
 </aside>
 
-@Html.AntiForgeryToken()

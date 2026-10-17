@@ -1,0 +1,25 @@
+@using BLL.Models
+@model CheckoutModel
+
+@{
+    ViewData["Title"] = "Booking confirmed";
+}
+
+<section class="checkout-page order-confirmation">
+    <p class="seat-page-eyebrow">Booking confirmed</p>
+    <h1>Your seats are booked</h1>
+    <p>Booking name: <strong>@(Model.IsSignedInCustomer ? Model.CustomerName : Model.GuestName)</strong></p>
+
+    <section class="checkout-card" aria-label="Confirmed booking details">
+        <h2>Seats</h2>
+        <ul class="checkout-seat-list">
+            @foreach (var seat in Model.Seats)
+            {
+                <li><span>Seat @seat.Label</span><strong>BDT @seat.Price.ToString("0.00")</strong></li>
+            }
+        </ul>
+        <p class="checkout-total"><span>Total</span><strong>BDT @Model.Total.ToString("0.00")</strong></p>
+    </section>
+
+    <a class="btn btn-primary" asp-controller="Select" asp-action="Index">Back to layouts</a>
+</section>

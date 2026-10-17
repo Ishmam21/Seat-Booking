@@ -59,7 +59,7 @@
                             }
                             else if (User.IsInRole("Customer"))
                             {
-                                <span class="account-menu-placeholder" aria-disabled="true">Booked seats</span>
+                                <a class="account-menu-link" asp-controller="MyBookings" asp-action="Index">Booked seats</a>
                             }
                             <form asp-controller="Login" asp-action="Logout" method="post">
                                 <button class="account-logout" type="submit">Log out</button>

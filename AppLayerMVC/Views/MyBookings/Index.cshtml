@@ -1,0 +1,44 @@
+@using BLL.Models
+@model List<MyBookingGroupModel>
+
+@{
+    ViewData["Title"] = "My booked seats";
+}
+
+<section class="my-bookings-page">
+    <p class="seat-page-eyebrow">Your account</p>
+    <h1>My booked seats</h1>
+    <p class="my-bookings-intro">Seats reserved with your account appear here. Seats from the same checkout are grouped together.</p>
+
+    @if (Model.Count == 0)
+    {
+        <div class="checkout-card my-bookings-empty">
+            <h2>No booked seats yet</h2>
+            <p>When you book seats while signed in, they’ll show up here.</p>
+            <a class="btn btn-primary" asp-controller="Select" asp-action="Index">Browse layouts</a>
+        </div>
+    }
+    else
+    {
+        <div class="my-bookings-list">
+            @foreach (var booking in Model)
+            {
+                <article class="checkout-card my-booking-card">
+                    <header class="my-booking-heading">
+                        <div>
+                            <h2>@booking.LayoutName</h2>
+                            <p>Booked @booking.BookedAt.ToLocalTime().ToString("dd MMM yyyy, h:mm tt")</p>
+                        </div>
+                        <span class="my-booking-seat-count">@booking.Seats.Count @(booking.Seats.Count == 1 ? "seat" : "seats")</span>
+                    </header>
+                    <ul class="my-booking-seats">
+                        @foreach (var seat in booking.Seats)
+                        {
+                            <li><span>Seat @seat.Label</span><span class="my-booking-payment">@seat.PaymentStatus</span></li>
+                        }
+                    </ul>
+                </article>
+            }
+        </div>
+    }
+</section>

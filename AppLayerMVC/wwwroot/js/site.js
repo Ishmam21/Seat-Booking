@@ -102,26 +102,26 @@ document.getElementById('explore-360')?.addEventListener('click', () => {
 
 if (document.getElementById('preview-panel')) renderSeatSelection();
 
-async function bookSelectedSeats() {
-    const selectedSeats = [...selected].map(id => document.querySelector(`.booking-seat[data-seat-id="${id}"]`)).filter(Boolean);
-    if (selectedSeats.length === 0) {
-        alert('Select at least one seat before booking.');
+function bookSelectedSeats() {
+    const seatIds = document.getElementById('checkout-seat-ids');
+    const form = document.getElementById('checkout-form');
+    if (!form) return;
+
+    seatIds.replaceChildren();
+    if (selected.size === 0) {
+        alert('Select at least one seat before checkout.');
         return;
     }
 
-    for (const seat of selectedSeats) {
-        const response = await fetch(`/Book/BookSeat?id=${parseInt(seat.dataset.seatId)}`, {
-            method: 'POST',
-            headers: { 'RequestVerificationToken': requestToken() }
-        });
-        if (!response.ok) {
-            alert(await response.text() || 'A selected seat could not be booked.');
-            window.location.reload();
-            return;
-        }
+    for (const id of selected) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'seatIds';
+        input.value = id;
+        seatIds.appendChild(input);
     }
 
-    window.location.reload();
+    form.submit();
 }
 
 function lockCell(){

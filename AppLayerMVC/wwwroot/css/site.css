@@ -724,6 +724,260 @@ h2,
     font-size: 0.82rem;
 }
 
+.checkout-page {
+    width: min(100%, 760px);
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+
+.checkout-heading {
+    margin-bottom: 22px;
+}
+
+.checkout-heading h1,
+.order-confirmation h1 {
+    margin-bottom: 8px;
+}
+
+.checkout-heading > p:last-child,
+.guest-checkout-heading p {
+    color: var(--wraith-muted);
+}
+
+.checkout-card {
+    margin-bottom: 16px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.75);
+}
+
+.checkout-card h2 {
+    margin-bottom: 16px;
+    font-size: 1.2rem;
+}
+
+.checkout-seat-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.checkout-seat-list li,
+.checkout-total,
+.guest-checkout-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.checkout-total {
+    margin: 18px 0 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.guest-checkout-heading {
+    margin-bottom: 16px;
+}
+
+.guest-checkout-heading h2,
+.guest-checkout-heading p {
+    margin-bottom: 4px;
+}
+
+.guest-checkout-card label {
+    display: block;
+    margin: 12px 0 5px;
+    font-weight: 600;
+}
+
+.guest-checkout-card input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: white;
+}
+
+.checkout-payment-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0;
+}
+
+.checkout-success {
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: rgba(4, 124, 88, 0.1);
+    color: var(--wraith-green);
+}
+
+.checkout-back-link {
+    display: inline-block;
+    margin-top: 6px;
+}
+
+.order-confirmation > p {
+    margin-bottom: 18px;
+}
+
+@media (max-width: 640px) {
+    .checkout-page { padding-top: 18px; }
+    .guest-checkout-heading { align-items: flex-start; }
+    .checkout-payment-actions { flex-direction: column; }
+}
+
+.my-bookings-page {
+    width: min(100%, 820px);
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+
+.my-bookings-page h1 {
+    margin-bottom: 8px;
+}
+
+.my-bookings-intro,
+.my-booking-heading p {
+    color: var(--wraith-muted);
+}
+
+.my-bookings-list {
+    display: grid;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.my-booking-card {
+    margin: 0;
+}
+
+.my-booking-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.my-booking-heading h2 {
+    margin-bottom: 4px;
+    font-size: 1.2rem;
+}
+
+.my-booking-heading p {
+    margin: 0;
+}
+
+.my-booking-seat-count {
+    white-space: nowrap;
+    font-weight: 600;
+}
+
+.my-booking-seats {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.my-booking-seats li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-top: 10px;
+    border-top: 1px solid var(--line);
+}
+
+.my-booking-payment {
+    color: var(--wraith-muted);
+    font-size: .9rem;
+}
+
+.my-bookings-empty {
+    margin-top: 24px;
+}
+
+@media (max-width: 640px) {
+    .my-bookings-page { padding-top: 18px; }
+    .my-booking-heading { flex-direction: column; }
+}
+
+/* WHY: The standalone warm-up page uses the site palette without loading libraries or gradients. */
+.warmup-body {
+    display: grid;
+    place-items: center;
+    padding: 24px;
+}
+
+.warmup-panel {
+    width: min(100%, 420px);
+    text-align: center;
+}
+
+.warmup-art {
+    position: relative;
+    display: grid;
+    place-items: center;
+    min-height: 190px;
+}
+
+.warmup-doodle {
+    width: 180px;
+    overflow: visible;
+    fill: none;
+    stroke: var(--wraith-green);
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    animation: warmup-wiggle 3.2s ease-in-out infinite;
+}
+
+.warmup-spinner {
+    position: absolute;
+    bottom: 5px;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--line);
+    border-top-color: var(--wraith-green);
+    border-radius: 50%;
+    animation: warmup-spin 1s linear infinite;
+}
+
+.warmup-message {
+    margin: 8px 0 0;
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 1.35rem;
+}
+
+.warmup-slow-message,
+.warmup-failure p {
+    color: var(--wraith-muted);
+}
+
+.warmup-failure p {
+    margin: 14px 0 18px;
+}
+
+.warmup-panel [hidden] {
+    display: none !important;
+}
+
+@keyframes warmup-wiggle {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-7px) rotate(2deg); }
+}
+
+@keyframes warmup-spin {
+    to { transform: rotate(360deg); }
+}
+
 .seat-preview-panel {
     position: fixed;
     z-index: 30;

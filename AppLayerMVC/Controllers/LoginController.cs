@@ -15,6 +15,10 @@ public class LoginController : Controller
     [HttpGet]
     public IActionResult Index(string? returnUrl)
     {
+        // WHY: An authenticated visitor should not be shown a second login form.
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Select");
+
         SetModeNotice(returnUrl);
         ViewData["ReturnUrl"] = returnUrl;
         return View();
@@ -23,6 +27,10 @@ public class LoginController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Index(LoginModel model, string? returnUrl)
     {
+        // WHY: Block direct POSTs to login after authentication, matching the GET behavior.
+        if (User.Identity?.IsAuthenticated == true)
+            return RedirectToAction("Index", "Select");
+
         if (!ModelState.IsValid)
         {
             SetModeNotice(returnUrl);
@@ -74,6 +82,7 @@ public class LoginController : Controller
     [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
+        // WHY: Cookie authentication is stateless here; signing out expires the full auth cookie (no server session is configured).
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Select");
     }

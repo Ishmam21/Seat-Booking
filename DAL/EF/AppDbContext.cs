@@ -46,7 +46,11 @@ public partial class AppDbContext : DbContext
                 .HasDefaultValueSql("now()")
                 .HasColumnName("booked_at");
             entity.Property(e => e.SeatId).HasColumnName("seat_id");
+            entity.Property(e => e.BookingGroupId).HasColumnName("booking_group_id");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.GuestName).HasColumnName("guest_name");
+            entity.Property(e => e.GuestEmail).HasColumnName("guest_email");
+            entity.Property(e => e.PaymentStatus).HasColumnName("payment_status");
 
             entity.HasOne(d => d.Seat).WithOne(p => p.Booking)
                 .HasForeignKey<Booking>(d => d.SeatId)
@@ -55,8 +59,9 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.User).WithMany(p => p.Bookings)
                 .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("bookings_user_id_fkey");
+
         });
 
         modelBuilder.Entity<Layout>(entity =>

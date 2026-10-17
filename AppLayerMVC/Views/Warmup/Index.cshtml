@@ -1,0 +1,109 @@
+@{
+    Layout = null; // WHY: The warm-up page must render independently of any landing-page or authentication logic.
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Waking things up - Seatz</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="warmup-body">
+    <main class="warmup-panel" aria-live="polite">
+        @* WHY: Keep a single lightweight, locally authored doodle and spinner beside the warm-up status. *@
+        <div class="warmup-art" id="warmup-art">
+            <svg class="warmup-doodle" viewBox="0 0 180 150" role="img" aria-label="A sleepy little server waking up">
+                <path d="M39 111c-8-7-11-20-5-31 5-9 16-12 27-9 3-17 18-28 35-25 14 2 23 13 24 26 12-3 25 4 28 16 4 14-5 26-19 29H53c-5 0-10-2-14-6Z" />
+                <path d="M62 91c5-5 11-5 16 0m27 0c5-5 11-5 16 0M79 106c6 5 13 5 19 0" />
+                <path d="M28 43l7 7m3-17 2 9m-17 3 9 2m103 24 8-5m-2 13 9-2m-12 13 8 5" />
+                <path d="M81 119v10m13-10v10m-24 1h15m3 0h15" />
+            </svg>
+            <div class="warmup-spinner" aria-hidden="true"></div>
+        </div>
+        <p class="warmup-message" id="warmup-message">Waking things up...</p>
+        <p class="warmup-slow-message" id="warmup-slow-message" hidden>Still trying...</p>
+        <section class="warmup-failure" id="warmup-failure" hidden>
+            <p>Couldn’t connect to the database. Please reload the page to try again.</p>
+            <button type="button" class="btn btn-primary" id="warmup-reload">Reload</button>
+        </section>
+    </main>
+
+    @* WHY: Polling is local to this page, bounded by elapsed time and each request has its own abort timeout. *@
+    <script>
+        (() => {
+            const landingUrl = '/Select/Index';
+            const storageKey = 'seatz-neon-warmup-ok';
+            const startedAt = Date.now();
+            const maxWaitMs = 3 * 60 * 1000;
+            const cacheLifetimeMs = 4 * 60 * 1000;
+            const art = document.getElementById('warmup-art');
+            const message = document.getElementById('warmup-message');
+            const slowMessage = document.getElementById('warmup-slow-message');
+            const failure = document.getElementById('warmup-failure');
+
+            try {
+                const lastSuccess = Number(sessionStorage.getItem(storageKey));
+                const age = Date.now() - lastSuccess;
+                if (lastSuccess > 0 && age >= 0 && age < cacheLifetimeMs) {
+                    window.location.replace(landingUrl);
+                    return;
+                }
+            } catch {
+                // WHY: Storage can be disabled; the connection check still needs to work without it.
+            }
+
+            const slowTimer = window.setTimeout(() => {
+                slowMessage.hidden = false;
+            }, 15000);
+
+            document.getElementById('warmup-reload').addEventListener('click', () => location.reload());
+
+            const delay = milliseconds => new Promise(resolve => window.setTimeout(resolve, milliseconds));
+
+            async function pollUntilReady() {
+                while (Date.now() - startedAt < maxWaitMs) {
+                    const remainingMs = maxWaitMs - (Date.now() - startedAt);
+                    const requestTimeoutMs = Math.min(8000, remainingMs);
+                    const controller = new AbortController();
+                    const timeoutId = window.setTimeout(() => controller.abort(), requestTimeoutMs);
+
+                    try {
+                        const response = await fetch('/Warmup/Status', {
+                            method: 'GET',
+                            cache: 'no-store',
+                            signal: controller.signal
+                        });
+                        if (response.status === 200) {
+                            try {
+                                sessionStorage.setItem(storageKey, String(Date.now()));
+                            } catch {
+                                // WHY: A successful database response still proceeds when session storage is unavailable.
+                            }
+                            window.clearTimeout(slowTimer);
+                            window.location.replace(landingUrl);
+                            return;
+                        }
+                    } catch {
+                        // WHY: Retry both HTTP failures and network/abort errors without showing implementation details.
+                    } finally {
+                        window.clearTimeout(timeoutId);
+                    }
+
+                    const leftMs = maxWaitMs - (Date.now() - startedAt);
+                    if (leftMs <= 0) break;
+                    await delay(Math.min(2000, leftMs));
+                }
+
+                window.clearTimeout(slowTimer);
+                art.hidden = true;
+                message.hidden = true;
+                slowMessage.hidden = true;
+                failure.hidden = false;
+            }
+
+            pollUntilReady();
+        })();
+    </script>
+</body>
+</html>

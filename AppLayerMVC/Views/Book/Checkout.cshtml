@@ -1,0 +1,72 @@
+@using BLL.Models
+@model CheckoutModel
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<section class="checkout-page">
+    <header class="checkout-heading">
+        <p class="seat-page-eyebrow">Booking</p>
+        <h1>Review your seats</h1>
+        <p>Choose a mock payment result to complete the demo booking. No real payment will be taken.</p>
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <p class="auth-error" role="alert">@Model.ErrorMessage</p>
+    }
+    @if (!string.IsNullOrWhiteSpace(Model.StatusMessage))
+    {
+        <p class="checkout-success" role="status">@Model.StatusMessage</p>
+    }
+
+    <section class="checkout-card" aria-label="Booking summary">
+        <h2>Booking summary</h2>
+        <ul class="checkout-seat-list">
+            @foreach (var seat in Model.Seats)
+            {
+                <li><span>Seat @seat.Label</span><strong>BDT @seat.Price.ToString("0.00")</strong></li>
+            }
+        </ul>
+        <p class="checkout-total"><span>Total</span><strong>BDT @Model.Total.ToString("0.00")</strong></p>
+    </section>
+
+    @if (Model.IsSignedInCustomer)
+    {
+        <section class="checkout-card" aria-label="Customer account">
+            <h2>Booking as</h2>
+            <p>@Model.CustomerName</p>
+            <p>@Model.CustomerEmail</p>
+        </section>
+    }
+    else
+    {
+        <section class="checkout-card guest-checkout-card" aria-label="Guest checkout details">
+            <div class="guest-checkout-heading">
+                <div>
+                    <h2>Continue as a guest</h2>
+                    <p>Or sign in to use your customer account.</p>
+                </div>
+                <a class="btn btn-secondary" href="@Model.SignInUrl">Sign in</a>
+            </div>
+            <label for="guest-name">Name</label>
+            <input id="guest-name" name="guestName" form="place-order-form" value="@Model.GuestName" maxlength="100" autocomplete="name" required />
+            <label for="guest-email">Email</label>
+            <input id="guest-email" name="guestEmail" form="place-order-form" type="email" value="@Model.GuestEmail" autocomplete="email" required />
+        </section>
+    }
+
+    <form id="place-order-form" asp-controller="Book" asp-action="PlaceBooking" method="post" class="checkout-payment-actions">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="layoutId" value="@Model.LayoutId" />
+        @foreach (var seatId in Model.SeatIds)
+        {
+            <input type="hidden" name="seatIds" value="@seatId" />
+        }
+        <button class="btn btn-primary" type="submit" name="paymentOutcome" value="success">Simulate payment success</button>
+        <button class="btn btn-secondary" type="submit" name="paymentOutcome" value="failure" formnovalidate>Simulate payment failure</button>
+    </form>
+
+    <a class="checkout-back-link" asp-controller="Book" asp-action="ViewLayout" asp-route-id="@Model.LayoutId">Change seats</a>
+</section>
