@@ -14,6 +14,10 @@ html {
 }
 
 :root {
+    --bs-body-font-family: "Outfit", sans-serif;
+    --bs-body-font-weight: 400;
+    --bs-btn-font-weight: 600;
+
     /* Wraith palette */
     --wraith-dark: #1E1702;
     --wraith-light: #E5E3E4;
@@ -43,7 +47,8 @@ html {
    ========================================================= */
 
 body {
-    font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: "Outfit", sans-serif;
+    font-weight: 400;
     color: var(--ink);
 
     background-color: #e5e3e4;
@@ -56,10 +61,22 @@ body {
 
 h1,
 h2,
+h3,
+h4,
+h5,
+h6,
 .brand {
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Outfit", sans-serif;
     font-weight: 700;
     letter-spacing: -0.02em;
+}
+
+/* Keep emphasized copy and controls semi-bold while regular copy stays at the body weight. */
+strong,
+b,
+.btn,
+button {
+    font-weight: 600;
 }
 
 ::selection {
@@ -171,7 +188,7 @@ h2,
     text-decoration: none;
     padding: 6px 14px;
     border-radius: 999px;
-    font-weight: 500;
+    font-weight: 600;
     transition:
         background 0.2s ease,
         color 0.2s ease;
@@ -200,7 +217,7 @@ h2,
     text-decoration: none;
     padding: 6px 14px;
     border-radius: 999px;
-    font-weight: 500;
+    font-weight: 600;
     font-size: 0.9375rem;
     transition:
         background 0.2s ease,
@@ -324,7 +341,7 @@ h2,
     background: var(--wraith-green);
     border-color: var(--wraith-green);
     color: #fff;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .account-dropdown {
@@ -497,7 +514,7 @@ h2,
     margin: 0 0 5px;
     color: var(--wraith-green);
     font-size: 0.78rem;
-    font-weight: 700;
+    font-weight: 600;
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
@@ -952,7 +969,7 @@ h2,
 
 .warmup-message {
     margin: 8px 0 0;
-    font-family: "Fraunces", Georgia, serif;
+    font-family: "Outfit", sans-serif;
     font-size: 1.35rem;
 }
 
@@ -1560,7 +1577,7 @@ h2,
     background: var(--wraith-green);
     color: #fff;
     font-size: 1.75rem;
-    font-weight: 700;
+    font-weight: 600;
 }
 
 .seat-image-editor form {
