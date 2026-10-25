@@ -2,6 +2,56 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
+// WHY: Fit only an overflowing booking map on narrow screens while preserving the full seat size needed for tapping.
+function fitBookingSeatMap() {
+    const wrapper = document.querySelector('.seat-wrapper');
+    const map = wrapper?.querySelector('.seat-grid');
+    if (!wrapper || !map) return;
+
+    map.style.transform = '';
+    map.style.transformOrigin = '';
+    wrapper.style.height = '';
+    wrapper.classList.remove('seat-wrapper-scaled');
+
+    const naturalWidth = map.offsetWidth;
+    const naturalHeight = map.offsetHeight;
+    // WHY: clientWidth includes the wrapper's padding, so subtract it to fit the grid into the actually visible area.
+    const wrapperStyle = getComputedStyle(wrapper);
+    const containerWidth = wrapper.clientWidth
+        - parseFloat(wrapperStyle.paddingLeft)
+        - parseFloat(wrapperStyle.paddingRight);
+    if (!naturalWidth || naturalWidth <= containerWidth) {
+        wrapper.scrollLeft = 0;
+        return;
+    }
+
+    const seatWidth = map.querySelector('.booking-seat')?.offsetWidth || 48;
+    const fitScale = containerWidth / naturalWidth;
+    const minimumScale = 28 / seatWidth;
+    const scale = Math.max(fitScale, minimumScale);
+
+    map.style.transformOrigin = 'top left';
+    map.style.transform = `scale(${scale})`;
+    wrapper.style.height = `${naturalHeight * scale}px`;
+    wrapper.classList.add('seat-wrapper-scaled');
+    // WHY: Center any remaining overflow when the 28px tap target limit prevents fitting the entire map.
+    wrapper.scrollLeft = Math.max(0, (naturalWidth * scale - containerWidth) / 2);
+}
+
+// WHY: Recalculate after layout changes so the map fits on initial load, resize, and phone rotation.
+let seatMapFitFrame = null;
+function scheduleBookingSeatMapFit() {
+    if (seatMapFitFrame !== null) cancelAnimationFrame(seatMapFitFrame);
+    seatMapFitFrame = requestAnimationFrame(() => {
+        seatMapFitFrame = null;
+        fitBookingSeatMap();
+    });
+}
+
+scheduleBookingSeatMapFit();
+window.addEventListener('resize', scheduleBookingSeatMapFit);
+window.addEventListener('orientationchange', scheduleBookingSeatMapFit);
+
 function requestToken() {
     return document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
 }

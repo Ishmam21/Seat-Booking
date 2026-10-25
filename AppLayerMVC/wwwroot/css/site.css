@@ -547,6 +547,11 @@ button {
     padding: 28px 8px 8px;
 }
 
+/* WHY: Remove the normal bottom padding after scaling so the wrapper has no empty strip below the map. */
+.seat-wrapper.seat-wrapper-scaled {
+    padding-bottom: 0;
+}
+
 .seat-grid {
     display: grid;
     grid-auto-rows: 48px;
