@@ -480,3 +480,6 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Generated project review bundle
+/PROJECT_FOR_REVIEW.md
