@@ -19,11 +19,13 @@ public class SettingsController : Controller
 
     private readonly UserService _users;
     private readonly IWebHostEnvironment _environment;
+    private readonly ImageService _images;
 
-    public SettingsController(UserService users, IWebHostEnvironment environment)
+    public SettingsController(UserService users, IWebHostEnvironment environment, ImageService images)
     {
         _users = users;
         _environment = environment;
+        _images = images;
     }
 
     [HttpGet]
@@ -66,7 +68,7 @@ public class SettingsController : Controller
         var (user, error) = await _users.UpdateAccountAsync(userId, model);
         if (error != null || user == null)
         {
-            if (newPicturePath != null) DeletePicture(newPicturePath);
+            if (newPicturePath != null) await DeletePictureAsync(newPicturePath); 
             model.ProfilePictureUrl = current.ProfilePictureUrl;
             ModelState.AddModelError(nameof(model.CurrentPassword), error ?? "Could not update the account.");
             return View(model);
@@ -74,7 +76,7 @@ public class SettingsController : Controller
 
         await RefreshSignInAsync(user);
         if ((newPicturePath != null || model.RemoveProfilePicture) && !string.IsNullOrWhiteSpace(current.ProfilePictureUrl))
-            DeletePicture(current.ProfilePictureUrl);
+            await DeletePictureAsync(current.ProfilePictureUrl); 
         TempData["SettingsMessage"] = "Your settings have been updated.";
         return RedirectToAction(nameof(Index));
     }
@@ -87,7 +89,7 @@ public class SettingsController : Controller
         if (current == null) return NotFound();
 
         if (!await _users.DeleteAccountAsync(userId)) return NotFound();
-        if (!string.IsNullOrWhiteSpace(current.ProfilePictureUrl)) DeletePicture(current.ProfilePictureUrl);
+       if (!string.IsNullOrWhiteSpace(current.ProfilePictureUrl)) await DeletePictureAsync(current.ProfilePictureUrl);
 
         await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         return RedirectToAction("Index", "Select");
@@ -96,26 +98,16 @@ public class SettingsController : Controller
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     private async Task<string> SavePictureAsync(IFormFile picture, string extension)
-    {
-        var directory = Path.Combine(_environment.WebRootPath, "images", "profile-pictures");
-        Directory.CreateDirectory(directory);
+{
+    // REMOVED: Path.Combine(_environment.WebRootPath...), Directory.CreateDirectory, File.Create, CopyToAsync
+    await using var stream = picture.OpenReadStream();   // ADDED: reads the upload without a temp file
+    // ADDED: uploads to the "profile-pictures" folder in Blob Storage and returns the full https URL
+    return await _images.UploadAsync(stream, picture.ContentType, "profile-pictures", extension);
+}
 
-        var fileName = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
-        var filePath = Path.Combine(directory, fileName);
-        await using var file = System.IO.File.Create(filePath);
-        await picture.CopyToAsync(file);
-
-        return $"/images/profile-pictures/{fileName}";
-    }
-
-    private void DeletePicture(string pictureUrl)
-    {
-        if (!pictureUrl.StartsWith("/images/profile-pictures/", StringComparison.Ordinal)) return;
-
-        var fileName = Path.GetFileName(pictureUrl);
-        var filePath = Path.Combine(_environment.WebRootPath, "images", "profile-pictures", fileName);
-        if (System.IO.File.Exists(filePath)) System.IO.File.Delete(filePath);
-    }
+// CHANGED: now async Task (was void), because deleting a blob is an async call
+    private Task DeletePictureAsync(string pictureUrl) => _images.DeleteAsync(pictureUrl);
+// The blob service already ignores empty values and old "/images/..." paths, so the old StartsWith check is gone
 
     private async Task RefreshSignInAsync(AuthUser user)
     {
