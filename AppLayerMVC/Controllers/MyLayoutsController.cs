@@ -2,6 +2,9 @@ using System.Security.Claims;
 using BLL.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using BLL.Services;   // CHANGED: was "using DAL.Storage;"; delete the DAL using
+
+
 
 namespace AppLayerMVC.Controllers;
 
@@ -17,10 +20,13 @@ public class MyLayoutsController : Controller
     private readonly LayoutService _layouts;
     private readonly IWebHostEnvironment _environment;
 
-    public MyLayoutsController(LayoutService layouts, IWebHostEnvironment environment)
+    private readonly ImageService _images; 
+
+    public MyLayoutsController(LayoutService layouts, IWebHostEnvironment environment , ImageService images)
     {
         _layouts = layouts;
         _environment = environment;
+        _images = images;
     }
 
     public async Task<IActionResult> Index()
@@ -46,7 +52,7 @@ public class MyLayoutsController : Controller
         return updated ? Ok() : NotFound();
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+        [HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> UploadSeatImage(int layoutId, int seatId, IFormFile? seatImage)
     {
         if (seatImage == null || seatImage.Length == 0)
@@ -65,25 +71,26 @@ public class MyLayoutsController : Controller
         var seat = layout.Seats.FirstOrDefault(item => item.Id == seatId);
         if (seat == null) return NotFound();
 
-        var directory = Path.Combine(_environment.WebRootPath, "images", "seat-images");
-        Directory.CreateDirectory(directory);
-        var fileName = $"{Guid.NewGuid():N}{extension.ToLowerInvariant()}";
-        var filePath = Path.Combine(directory, fileName);
-        await using (var stream = System.IO.File.Create(filePath))
-            await seatImage.CopyToAsync(stream);
+        // REMOVED: var directory = Path.Combine(_environment.WebRootPath, ...)  (web server disk path)
+        // REMOVED: Directory.CreateDirectory(directory)                          (no local folder needed)
+        // REMOVED: var fileName / var filePath                                   (the blob service builds the name)
+        // REMOVED: System.IO.File.Create + CopyToAsync                           (that was the write to wwwroot)
 
-        var imageUrl = $"/images/seat-images/{fileName}";
+        // ADDED: opens the uploaded file as a stream; "await using" closes it when the method ends
+        await using var stream = seatImage.OpenReadStream();
+        // ADDED: uploads to Blob Storage; returns the full https URL (replaces the "/images/seat-images/..." string)
+        var imageUrl = await _images.UploadAsync(stream, seatImage.ContentType, "seat-images", extension);
+
         if (!await _layouts.UpdateSeatImageAsync(layoutId, ownerId, seatId, imageUrl))
         {
-            System.IO.File.Delete(filePath);
+            await _images.DeleteAsync(imageUrl);   // CHANGED: was System.IO.File.Delete(filePath); removes the blob we just uploaded
             return NotFound();
         }
 
-        DeleteImage(seat.Img);
+        await _images.DeleteAsync(seat.Img);       // CHANGED: was DeleteImage(seat.Img); removes the old image's blob
         TempData["MyLayoutsMessage"] = "The seat image has been uploaded.";
         return RedirectToAction(nameof(Edit), new { id = layoutId });
     }
-
     private int GetUserId() => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
     private void DeleteImage(string? imageUrl)

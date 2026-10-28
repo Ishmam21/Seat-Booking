@@ -39,6 +39,8 @@ builder.Services.AddSingleton<DAL.Storage.IImageStorage>(_ =>
         builder.Configuration["AzureStorage:ConnectionString"]!,   // ! = we promise it's set (step 5)
         builder.Configuration["AzureStorage:Container"] ?? "uploads"));
 
+builder.Services.AddScoped<ImageService>(); 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
