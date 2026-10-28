@@ -33,6 +33,12 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<LayoutService>();
 builder.Services.AddScoped<BookingService>();
 
+// CHANGED: factory lambda reads config here (MVC owns config) and hands plain strings to the DAL class
+builder.Services.AddSingleton<DAL.Storage.IImageStorage>(_ =>
+    new DAL.Storage.BlobImageStorage(
+        builder.Configuration["AzureStorage:ConnectionString"]!,   // ! = we promise it's set (step 5)
+        builder.Configuration["AzureStorage:Container"] ?? "uploads"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
